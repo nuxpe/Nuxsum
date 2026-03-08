@@ -24,43 +24,43 @@ let isListening = false
 
 if (!SpeechRecognition) {
   console.log("Speech recognition not supported in this browser.");
-}
-const recognition = new SpeechRecognition();
-recognition.lang = "pt-PT";
-recognition.interimResults = false;
-recognition.maxAlternatives = 1;
+  showToast("your browser doesnt support speech-to-text.")
+} else {
+  const recognition = new SpeechRecognition();
+  recognition.lang = "pt-PT";
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+  recognition.continuous = true
 
-btnMic.addEventListener("click", () => {
-  if (!isListening) {
-    recognition.start();
-    isListening = true;
-    btnMic.classList.add("listening");
-    showToast("Listening...");
-  } else {
-    recognition.stop();
+  btnMic.addEventListener("click", () => {
+    if (!isListening) {
+      recognition.start();
+      isListening = true;
+      btnMic.classList.add("listening");
+      showToast("Listening...");
+    } else {
+      recognition.stop();
+      isListening = false;
+      btnMic.classList.remove("listening");
+      showToast("stopped listening");
+    }
+  });
+
+  recognition.addEventListener("end", () => {
     isListening = false;
     btnMic.classList.remove("listening");
-    showToast("stopped listening");
-  }
-});
+  });
+  recognition.addEventListener("result", (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript;
+    inputText.value += (inputText.value ? " " : "") + transcript;
+    inputText.dispatchEvent(new Event("input"));
+  });
 
-recognition.addEventListener("end", () => {
-  isListening = false;
-  btnMic.classList.remove("listening");
-});
-recognition.addEventListener("result", (event) => {
-  const transcript = event.results[0][0].transcript;
-  inputText.value += (inputText.value ? " " : "") + transcript;
-  inputText.dispatchEvent(new Event("input"));
-});
 
-recognition.addEventListener("start", () => {
-  btnMic.classList.add("listening");
-});
 
-recognition.addEventListener("end", () => {
-  btnMic.classList.remove("listening");
-});
+}
+
+
 
 // event listerns
 
