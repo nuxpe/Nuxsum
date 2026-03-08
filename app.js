@@ -5,12 +5,40 @@ const btnSummarize = document.getElementById("btnSummarize");
 const output = document.getElementById("output");
 const charCounter = document.getElementById("charCounter");
 const buttonSummarizeText = document.getElementById("btnSummarizeText")
+const btnMic = document.getElementById("btnMic")
+const copyIconWrapper = document.getElementById("copyIconWrapper");
 // card sizes
 const sizeCards = document.querySelectorAll(".summary-size-card");
 let selectedSize = "medium";
 
+// for thje mic functionality
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-const copyIconWrapper = document.getElementById("copyIconWrapper");
+if (!SpeechRecognition) {
+  console.log("Speech recognition not supported in this browser.");
+}
+const recognition = new SpeechRecognition();
+recognition.lang = "en-US";
+recognition.interimResults = false;
+recognition.maxAlternatives = 1;
+
+btnMic.addEventListener("click", () => {
+  recognition.start();
+});
+
+  recognition.addEventListener("result", (event) => {
+    const transcript = event.results[0][0].transcript;
+    inputText.value += (inputText.value ? " " : "") + transcript;
+    inputText.dispatchEvent(new Event("input"));
+  });
+
+recognition.addEventListener("start", () => {
+  btnMic.classList.add("listening");
+});
+
+recognition.addEventListener("end", () => {
+  btnMic.classList.remove("listening");
+});
 
 copyIconWrapper.addEventListener("click", () => {
   const text = output.textContent.trim();
