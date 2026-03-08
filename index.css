@@ -210,6 +210,11 @@ body {
 .align-center{
   align-items: center;
 }
+
+.container-main {
+  max-width: 900px;
+  margin: 0 auto;
+}
 /* ROOT CONTAINER */
 .main-root {
   padding: var(--space-base);
