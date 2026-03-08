@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nuxsum</title>
+  <link rel="stylesheet" href="index.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="container-main">
+  <div id="toast" class="toast"></div>
+  <header class="app-header  padding-base margin-bottom-l">
+    <div class="header-inner">
+      <div class="display-flex align-center gap8">
+        <img src="./assets/logo.png" class="logo-icon">
+        <span class="font-bold">Nuxsum</span>
+      </div>
+  </header>
+
+  <main class="padding-l">
+
+    <section class="margin-bottom-l">
+      <div class="tight-line margin-bottom-l">
+        <span class="text-xl font-bold">Distill any text</span><br>
+        <span class="text-xl font-bold text-primary hero-title">into its essence.</span>
+      </div>
+      <label for="inputText" class="font-light text-opacity-50 ">Paste a wall of text. Pick your length. Get a clean
+        summary in seconds.</label><br />
+    </section>
+
+    <section class="margin-bottom-l">
+      <textarea id="inputText" placeholder="Paste the text here..."></textarea>
+
+      <div id="charCounter" class="fill text-opacity-50 margin-bottom-l"></div>
+    </section>
+
+    <section class="margin-bottom-l">
+      <div class="margin-bottom-m text-opacity-50"> SUMMARY LENGHT</div>
+
+
+
+      <div id="summary-size-group" class="display-flex gap16">
+        <div data-size="size-short" class="summary-size-card">
+          <i data-lucide="zap"></i>
+          <div>short</div>
+          <div class="font-light text-opacity-50">2-3 sentences</div>
+        </div>
+
+        <div data-size="size-short" class="summary-size-card">
+          <i data-lucide="align-left"></i>
+          <div>medium</div>
+          <div class="font-light text-opacity-50">solid paragraph</div>
+        </div>
+
+        <div data-size="size-short" class="summary-size-card">
+          <i data-lucide="file-text"></i>
+          <div>long</div>
+          <div class="font-light text-opacity-50">detailed resume</div>
+        </div>
+      </div>
+
+      <div class="text-center margin-top-l">
+        <button id="btnSummarize" class="resume-button">
+          <span id="btnSummarizeText">Summarize</span><span class="margin-left-m" data-lucide="arrow-right"></span>
+        </button>
+      </div>
+
+    </section>
+
+    <section>
+      <h2>Result</h2>
+
+      <div class="output-container">
+        <div id="copyIconWrapper" class="output-copy-button pointer" type="button" aria-label="Copy summary">
+          <i data-lucide="clipboard"></i>
+        </div>
+
+        <div id="output" class="output-text"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./app.js"></script>
+
+</body>
+
+</html>
