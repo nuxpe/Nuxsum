@@ -20,17 +20,18 @@ sizeCards.forEach((card) => {
 
 // for thje mic functionality
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let isListening = false
+let isListening = false;
 
 if (!SpeechRecognition) {
   console.log("Speech recognition not supported in this browser.");
-  showToast("your browser doesnt support speech-to-text.")
+  showToast("Your browser doesn't support speech-to-text.");
 } else {
   const recognition = new SpeechRecognition();
+
   recognition.lang = "pt-PT";
-  recognition.interimResults = true;
+  recognition.interimResults = false;
   recognition.maxAlternatives = 1;
-  recognition.continuous = true
+  recognition.continuous = true;
 
   btnMic.addEventListener("click", () => {
     if (!isListening) {
@@ -42,22 +43,31 @@ if (!SpeechRecognition) {
       recognition.stop();
       isListening = false;
       btnMic.classList.remove("listening");
-      showToast("stopped listening");
+      showToast("Stopped listening");
     }
   });
 
-  recognition.addEventListener("end", () => {
-    isListening = false;
-    btnMic.classList.remove("listening");
+  recognition.addEventListener("start", () => {
+    console.log("speech recognition started");
   });
+
   recognition.addEventListener("result", (event) => {
     const transcript = event.results[event.results.length - 1][0].transcript;
     inputText.value += (inputText.value ? " " : "") + transcript;
     inputText.dispatchEvent(new Event("input"));
   });
 
+  recognition.addEventListener("end", () => {
+    isListening = false;
+    btnMic.classList.remove("listening");
+  });
 
-
+  recognition.addEventListener("error", (event) => {
+    console.error("Speech recognition error:", event.error);
+    showToast("Microphone error: " + event.error);
+    isListening = false;
+    btnMic.classList.remove("listening");
+  });
 }
 
 
