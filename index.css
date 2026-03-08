@@ -44,11 +44,7 @@
   --radius-l: 16px;
 }
 
-.container-main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 var(--space-base);
-}
+
 /* FONT SIZE */
 .text-xs { font-size: var(--text-xs); }
 .text-m { font-size: var(--text-m); }
