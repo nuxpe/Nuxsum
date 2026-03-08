@@ -13,12 +13,13 @@ let selectedSize = "medium";
 
 // for thje mic functionality
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let isListening = false
 
 if (!SpeechRecognition) {
   console.log("Speech recognition not supported in this browser.");
 }
 const recognition = new SpeechRecognition();
-recognition.lang = "en-US";
+recognition.lang = "pt-PT";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
