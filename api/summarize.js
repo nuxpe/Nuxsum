@@ -21,10 +21,10 @@ module.exports = async (req, res) => {
 
   let sizeInstruction = "";
 
-  if (size === "short") {
+  if (size === "size-short") {
     sizeInstruction =
       "Write a very concise summary in 2-3 sentences. Capture only the main idea and the most important points. Use your own words.";
-  } else if (size === "long") {
+  } else if (size === "size-long") {
     sizeInstruction =
       "Write a detailed but clear summary explaining the main ideas and important details. Keep the language natural, human-like and easy to read.";
   } else {

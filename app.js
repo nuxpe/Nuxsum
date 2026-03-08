@@ -9,7 +9,14 @@ const btnMic = document.getElementById("btnMic")
 const copyIconWrapper = document.getElementById("copyIconWrapper");
 // card sizes
 const sizeCards = document.querySelectorAll(".summary-size-card");
-let selectedSize = "medium";
+let selectedSize = "size-medium";
+
+// marcar medium por defeito
+sizeCards.forEach((card) => {
+  if (card.dataset.size == "size-medium") {
+    card.classList.add("selected");
+  }
+});
 
 // for thje mic functionality
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -24,14 +31,28 @@ recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
 btnMic.addEventListener("click", () => {
-  recognition.start();
+  if (!isListening) {
+    recognition.start();
+    isListening = true;
+    btnMic.classList.add("listening");
+    showToast("Listening...");
+  } else {
+    recognition.stop();
+    isListening = false;
+    btnMic.classList.remove("listening");
+    showToast("stopped listening");
+  }
 });
 
-  recognition.addEventListener("result", (event) => {
-    const transcript = event.results[0][0].transcript;
-    inputText.value += (inputText.value ? " " : "") + transcript;
-    inputText.dispatchEvent(new Event("input"));
-  });
+recognition.addEventListener("end", () => {
+  isListening = false;
+  btnMic.classList.remove("listening");
+});
+recognition.addEventListener("result", (event) => {
+  const transcript = event.results[0][0].transcript;
+  inputText.value += (inputText.value ? " " : "") + transcript;
+  inputText.dispatchEvent(new Event("input"));
+});
 
 recognition.addEventListener("start", () => {
   btnMic.classList.add("listening");
@@ -52,7 +73,7 @@ copyIconWrapper.addEventListener("click", () => {
   copyIconWrapper.style.pointerEvents = "none";
   lucide.createIcons();
   showToast("Copied!")
-  
+
 
   setTimeout(() => {
     copyIconWrapper.innerHTML = '<i data-lucide="clipboard"></i>';
@@ -61,12 +82,7 @@ copyIconWrapper.addEventListener("click", () => {
   }, 1000);
 });
 
-// marcar medium por defeito
-sizeCards.forEach((card) => {
-  if (card.dataset.size === "medium") {
-    card.classList.add("selected");
-  }
-});
+
 
 charCounter.textContent = "0 / 12000";
 

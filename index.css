@@ -419,8 +419,15 @@ button:hover {
   transform: scale(1.1);
 }
 
-.mic-ondiv.listening{
-  background-color: var(--color-primary);
+.mic-button.listening{
+  color: var(--color-primary);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse{
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .relative {
