@@ -265,7 +265,6 @@ button {
   color: white;
   font-weight: var(--font-medium);
   cursor: pointer;
-  margin-left: var(--space-m);
   transition: 500ms;
 }
 
@@ -325,10 +324,18 @@ button:hover {
   gap: 16px;
 }
 
+@media (max-width: 640px) {
+  .summary-size-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 .summary-size-card{
   border-radius: var(--radius-m);
   border: 1px solid var(--color-border);
   flex: 1;
+  min-width: 120px;
   cursor: pointer;
   background-color: var(--color-washed-blue);
   padding: var(--space-base);
