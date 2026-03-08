@@ -20,7 +20,10 @@ sizeCards.forEach((card) => {
 
 // for thje mic functionality
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 let isListening = false;
+let shouldKeepListening = false;
+let finalTranscript = "";
 
 if (!SpeechRecognition) {
   console.log("Speech recognition not supported in this browser.");
@@ -34,42 +37,49 @@ if (!SpeechRecognition) {
   recognition.continuous = true;
 
   btnMic.addEventListener("click", () => {
-    if (!isListening) {
+    if (!shouldKeepListening) {
+      shouldKeepListening = true;
       recognition.start();
-      isListening = true;
-      btnMic.classList.add("listening");
       showToast("Listening...");
     } else {
+      shouldKeepListening = false;
       recognition.stop();
-      isListening = false;
-      btnMic.classList.remove("listening");
       showToast("Stopped listening");
     }
   });
 
   recognition.addEventListener("start", () => {
-    console.log("speech recognition started");
+    isListening = true;
+    btnMic.classList.add("listening");
   });
 
   recognition.addEventListener("result", (event) => {
-    const transcript = event.results[event.results.length - 1][0].transcript;
-    inputText.value += (inputText.value ? " " : "") + transcript;
+    let interimTranscript = "";
+
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript + " ";
+      } else {
+        interimTranscript += transcript;
+      }
+    }
+
+    inputText.value = finalTranscript + interimTranscript;
     inputText.dispatchEvent(new Event("input"));
   });
 
   recognition.addEventListener("end", () => {
     isListening = false;
     btnMic.classList.remove("listening");
+
+    if (shouldKeepListening) {
+      recognition.start();
+    }
   });
 
-  recognition.addEventListener("error", (event) => {
-    console.error("Speech recognition error:", event.error);
-    showToast("Microphone error: " + event.error);
-    isListening = false;
-    btnMic.classList.remove("listening");
-  });
 }
-
 
 
 // event listerns

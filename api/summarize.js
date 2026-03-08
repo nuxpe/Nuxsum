@@ -39,11 +39,11 @@ module.exports = async (req, res) => {
         {
           role: "system",
           content:
-            "You summarize texts clearly and naturally. Write like a human explaining ideas, not like an AI. Avoid robotic phrasing.",
+            "You summarize texts clearly and naturally. Write like a human explaining ideas, not like an AI. Avoid robotic phrasing.q You only summarize(reduce or add) the text u dont change the person or the language spoken",
         },
         {
           role: "user",
-          content: "Summarize the following text:\n\n" + text + "\n\n" + sizeInstruction,
+          content: "Summarize the following text in the language spoken:\n\n" + text + "\n\n" + sizeInstruction,
         },
       ],
     });
