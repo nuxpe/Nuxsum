@@ -419,7 +419,7 @@ button:hover {
   transform: scale(1.1);
 }
 
-.mic-button.listening{
+.mic-ondiv.listening{
   color: var(--color-primary);
   animation: pulse 1s infinite;
 }

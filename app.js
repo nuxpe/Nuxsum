@@ -62,6 +62,8 @@ recognition.addEventListener("end", () => {
   btnMic.classList.remove("listening");
 });
 
+// event listerns
+
 copyIconWrapper.addEventListener("click", () => {
   const text = output.textContent.trim();
 
