@@ -207,7 +207,9 @@ body {
   color: var(--color-text);
   min-height: 100vh;
 }
-
+.align-center{
+  align-items: center;
+}
 /* ROOT CONTAINER */
 .main-root {
   padding: var(--space-base);
