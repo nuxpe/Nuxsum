@@ -1,5 +1,8 @@
 lucide.createIcons();
 
+/* =========================
+   ELEMENTOS DOM
+========================= */
 const toast = document.getElementById("toast");
 const inputText = document.getElementById("inputText");
 const btnSummarize = document.getElementById("btnSummarize");
@@ -10,19 +13,22 @@ const btnMic = document.getElementById("btnMic");
 const copyIconWrapper = document.getElementById("copyIconWrapper");
 
 const sizeCards = document.querySelectorAll(".summary-size-card");
-let selectedSize = "size-medium";
-
 const languageToggle = document.getElementById("languageToggle");
 const languageMenu = document.getElementById("languageMenu");
 const languageOptions = document.querySelectorAll(".language-option");
+const languageDropdown = document.querySelector(".language-dropdown");
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+/* =========================
+   ESTADO
+========================= */
+let selectedSize = "size-medium";
 let recognition = null;
 let isListening = false;
-let shouldKeepListening = false;
 let finalTranscript = "";
 
+/* =========================
+   IDIOMA
+========================= */
 function getDefaultBrowserLanguage() {
   const browserLang = navigator.language || "en-US";
 
@@ -43,49 +49,174 @@ function t(key) {
   return translations[lang]?.[key] || translations["en-US"]?.[key] || key;
 }
 
-sizeCards.forEach((card) => {
-  if (card.dataset.size === "size-medium") {
-    card.classList.add("selected");
+function applyLanguage(lang) {
+  const tObj = translations[lang];
+  if (!tObj) return;
+
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.dataset.i18n;
+    if (tObj[key]) element.textContent = tObj[key];
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    const key = element.dataset.i18nPlaceholder;
+    if (tObj[key]) element.placeholder = tObj[key];
+  });
+
+  if (recognition) {
+    recognition.lang = lang;
   }
-});
+}
 
-if (!SpeechRecognition) {
-  console.log("Speech recognition not supported in this browser.");
-  showToast(t("speechNotSupported"));
-} else {
-  recognition = new SpeechRecognition();
+function setLanguage(lang) {
+  localStorage.setItem("nuxsum_lang", lang);
+  applyLanguage(lang);
+}
 
-  recognition.lang = getCurrentLanguage();
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
-  recognition.continuous = true;
+/* =========================
+   TOAST
+========================= */
+function showToast(text) {
+  toast.textContent = text;
+  toast.classList.add("show");
 
-  btnMic.addEventListener("click", () => {
-    if (!recognition) return;
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
 
-    recognition.lang = getCurrentLanguage();
+/* =========================
+   SUMMARY SIZE
+========================= */
+function initSummarySizeCards() {
+  sizeCards.forEach((card) => {
+    if (card.dataset.size === "size-medium") {
+      card.classList.add("selected");
+    }
 
-    if (!shouldKeepListening) {
-      shouldKeepListening = true;
-      finalTranscript = inputText.value ? inputText.value.trim() + " " : "";
+    card.addEventListener("click", () => {
+      sizeCards.forEach((item) => item.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedSize = card.dataset.size;
+    });
+  });
+}
 
-      try {
-        recognition.start();
-        showToast(t("listening"));
-      } catch (error) {
-        console.log("Recognition start blocked:", error);
-        shouldKeepListening = false;
-      }
-    } else {
-      shouldKeepListening = false;
-      recognition.stop();
-      showToast(t("stoppedListening"));
+/* =========================
+   CONTADOR DE CARACTERES
+========================= */
+function updateCharCounter() {
+  const count = inputText.value.length;
+  charCounter.textContent = `${count} / 12000`;
+
+  if (count >= 12000) {
+    charCounter.style.color = "red";
+  } else if (count > 10000) {
+    charCounter.style.color = "orange";
+  } else {
+    charCounter.style.color = "white";
+  }
+}
+
+function initCharCounter() {
+  charCounter.textContent = "0 / 12000";
+  inputText.addEventListener("input", updateCharCounter);
+}
+
+/* =========================
+   COPY RESULT
+========================= */
+function initCopyButton() {
+  copyIconWrapper.addEventListener("click", async () => {
+    const text = output.textContent.trim();
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+
+      copyIconWrapper.innerHTML = '<i data-lucide="check"></i>';
+      copyIconWrapper.style.pointerEvents = "none";
+      lucide.createIcons();
+      showToast(t("copied"));
+
+      setTimeout(() => {
+        copyIconWrapper.innerHTML = '<i data-lucide="clipboard"></i>';
+        copyIconWrapper.style.pointerEvents = "auto";
+        lucide.createIcons();
+      }, 1000);
+    } catch (error) {
+      console.error("Copy failed:", error);
+      showToast(t("serverError"));
+    }
+  });
+}
+
+/* =========================
+   DROPDOWN DE IDIOMA
+========================= */
+function initLanguageDropdown() {
+  languageToggle.addEventListener("click", () => {
+    languageMenu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", (event) => {
+    if (languageDropdown && !languageDropdown.contains(event.target)) {
+      languageMenu.classList.add("hidden");
     }
   });
 
-  recognition.addEventListener("start", () => {
-    isListening = true;
-    btnMic.classList.add("listening");
+  languageOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      const lang = option.dataset.lang;
+      setLanguage(lang);
+      languageMenu.classList.add("hidden");
+    });
+  });
+}
+
+/* =========================
+   MICROFONE
+========================= */
+function initSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    console.log("Speech recognition not supported in this browser.");
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = getCurrentLanguage();
+  recognition.interimResults = true;
+  recognition.continuous = true;
+  recognition.maxAlternatives = 1;
+
+  btnMic.addEventListener("click", () => {
+    if (!recognition) {
+      showToast(t("speechNotSupported"));
+      return;
+    }
+
+    if (!isListening) {
+      finalTranscript = inputText.value ? inputText.value.trim() + " " : "";
+      recognition.lang = getCurrentLanguage();
+
+      try {
+        recognition.start();
+        isListening = true;
+        btnMic.classList.add("listening");
+        showToast(t("listening"));
+      } catch (error) {
+        console.error("Speech start error:", error);
+      }
+    } else {
+      recognition.stop();
+      isListening = false;
+      btnMic.classList.remove("listening");
+      showToast(t("stoppedListening"));
+    }
   });
 
   recognition.addEventListener("result", (event) => {
@@ -106,12 +237,12 @@ if (!SpeechRecognition) {
   });
 
   recognition.addEventListener("end", () => {
-    isListening = false;
     btnMic.classList.remove("listening");
 
-    if (shouldKeepListening) {
+    if (isListening) {
       try {
         recognition.start();
+        btnMic.classList.add("listening");
       } catch (error) {
         console.log("Recognition restart blocked:", error);
       }
@@ -120,12 +251,10 @@ if (!SpeechRecognition) {
 
   recognition.addEventListener("error", (event) => {
     console.log("Speech recognition error:", event.error);
-
-    isListening = false;
     btnMic.classList.remove("listening");
 
     if (event.error === "not-allowed") {
-      shouldKeepListening = false;
+      isListening = false;
       showToast(t("speechNotSupported"));
       return;
     }
@@ -136,77 +265,10 @@ if (!SpeechRecognition) {
   });
 }
 
-languageToggle.addEventListener("click", () => {
-  languageMenu.classList.toggle("hidden");
-});
-
-document.addEventListener("click", (event) => {
-  const dropdown = document.querySelector(".language-dropdown");
-
-  if (dropdown && !dropdown.contains(event.target)) {
-    languageMenu.classList.add("hidden");
-  }
-});
-
-languageOptions.forEach((option) => {
-  option.addEventListener("click", () => {
-    const lang = option.dataset.lang;
-
-    localStorage.setItem("nuxsum_lang", lang);
-    applyLanguage(lang);
-
-    if (recognition) {
-      recognition.lang = lang;
-    }
-
-    languageMenu.classList.add("hidden");
-  });
-});
-
-copyIconWrapper.addEventListener("click", () => {
-  const text = output.textContent.trim();
-
-  if (!text) return;
-
-  navigator.clipboard.writeText(text);
-
-  copyIconWrapper.innerHTML = '<i data-lucide="check"></i>';
-  copyIconWrapper.style.pointerEvents = "none";
-  lucide.createIcons();
-  showToast(t("copied"));
-
-  setTimeout(() => {
-    copyIconWrapper.innerHTML = '<i data-lucide="clipboard"></i>';
-    copyIconWrapper.style.pointerEvents = "auto";
-    lucide.createIcons();
-  }, 1000);
-});
-
-charCounter.textContent = "0 / 12000";
-
-inputText.addEventListener("input", () => {
-  const count = inputText.value.length;
-
-  charCounter.textContent = `${count} / 12000`;
-
-  if (count >= 12000) {
-    charCounter.style.color = "red";
-  } else if (count > 10000) {
-    charCounter.style.color = "orange";
-  } else {
-    charCounter.style.color = "white";
-  }
-});
-
-sizeCards.forEach((card) => {
-  card.addEventListener("click", () => {
-    sizeCards.forEach((item) => item.classList.remove("selected"));
-    card.classList.add("selected");
-    selectedSize = card.dataset.size;
-  });
-});
-
-btnSummarize.addEventListener("click", async () => {
+/* =========================
+   SUMMARIZE
+========================= */
+async function summarizeText() {
   const text = inputText.value.trim();
   const size = selectedSize;
 
@@ -216,7 +278,7 @@ btnSummarize.addEventListener("click", async () => {
   }
 
   btnSummarize.disabled = true;
-  btnSummarize.classList.add("desabled-btn");
+  btnSummarize.classList.add("disabled-btn");
   buttonSummarizeText.textContent = t("waitingSummary");
   output.textContent = t("writingSummary");
 
@@ -227,15 +289,19 @@ btnSummarize.addEventListener("click", async () => {
     const res = await fetch("/api/summarize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, size, lang: getCurrentLanguage() }),
+      body: JSON.stringify({
+        text,
+        size,
+        lang: getCurrentLanguage()
+      }),
       signal: controller.signal
     });
 
     clearTimeout(timeoutId);
 
     const contentType = res.headers.get("content-type") || "";
-
     let data = {};
+
     if (contentType.includes("application/json")) {
       data = await res.json();
     } else {
@@ -250,48 +316,29 @@ btnSummarize.addEventListener("click", async () => {
     }
 
     output.textContent = data.summary || t("emptySummary");
-
-  } catch (e) {
+  } catch (error) {
     clearTimeout(timeoutId);
-    console.error("Summarize error:", e);
+    console.error("Summarize error:", error);
 
-    if (e.name === "AbortError") {
+    if (error.name === "AbortError") {
       output.textContent = t("requestTimeout");
     } else {
       output.textContent = t("serverError");
     }
   } finally {
     btnSummarize.disabled = false;
-    btnSummarize.classList.remove("desabled-btn");
+    btnSummarize.classList.remove("disabled-btn");
     buttonSummarizeText.textContent = t("summarize");
   }
-});
-
-function showToast(text) {
-  toast.textContent = text;
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
 }
 
-function applyLanguage(lang) {
-  const tObj = translations[lang];
-
-  document.documentElement.lang = lang;
-
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    const key = element.dataset.i18n;
-    if (tObj[key]) element.textContent = tObj[key];
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-    const key = element.dataset.i18nPlaceholder;
-    if (tObj[key]) element.placeholder = tObj[key];
-  });
+function initSummarizeButton() {
+  btnSummarize.addEventListener("click", summarizeText);
 }
 
+/* =========================
+   INIT
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
   let savedLang = localStorage.getItem("nuxsum_lang");
 
@@ -301,10 +348,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applyLanguage(savedLang);
-
-  if (recognition) {
-    recognition.lang = savedLang;
-  }
+  initSummarySizeCards();
+  initCharCounter();
+  initCopyButton();
+  initLanguageDropdown();
+  initSpeechRecognition();
 
   lucide.createIcons();
 });
