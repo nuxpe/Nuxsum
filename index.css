@@ -369,7 +369,7 @@ button:hover {
   height: 40px;
 }
 
-.desable-btn:hover{
+.desabled-btn:hover{
   cursor: not-allowed;
   opacity: 0.6;
 }

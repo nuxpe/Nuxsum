@@ -1,6 +1,6 @@
 const translations = {
   "en-US": {
-    title1: "Summarize any text",
+    title1: "Sumarize any text",
     title2: "into its essence.",
     subtitle: "Paste a wall of text. Pick your length. Get a clean summary in seconds.",
     placeholder: "Paste the text here...",
@@ -12,11 +12,21 @@ const translations = {
     long: "long",
     longDesc: "detailed summary",
     summarize: "Summarize",
-    result: "Result"
+    result: "Result",
+
+    emptyInput: "Write or paste any text first.",
+    waitingSummary: "Wait for the summary...",
+    writingSummary: "Writing the summary...",
+    copied: "Copied!",
+    listening: "Listening...",
+    stoppedListening: "Stopped listening",
+    speechNotSupported: "Your browser doesn't support speech-to-text.",
+    serverError: "Server error, try again...",
+    emptySummary: "Empty summary"
   },
 
   "pt-PT": {
-    title1: "Resuma qualquer texto",
+    title1: "Resume qualquer texto",
     title2: "até à sua essência.",
     subtitle: "Cole um texto longo. Escolha o tamanho. Obtenha um resumo limpo em segundos.",
     placeholder: "Cole o texto aqui...",
@@ -28,7 +38,17 @@ const translations = {
     long: "longo",
     longDesc: "resumo detalhado",
     summarize: "Resumir",
-    result: "Resultado"
+    result: "Resultado",
+
+    emptyInput: "Escreve ou cola primeiro algum texto.",
+    waitingSummary: "Espera pelo resumo...",
+    writingSummary: "A escrever o resumo...",
+    copied: "Copiado!",
+    listening: "A ouvir...",
+    stoppedListening: "Parar de ourvir...",
+    speechNotSupported: "O teu browser não suporta voz para texto.",
+    serverError: "Erro no servidor, tenta outra vez...",
+    emptySummary: "Resumo vazio"
   },
 
   "id-ID": {
@@ -44,7 +64,17 @@ const translations = {
     long: "panjang",
     longDesc: "ringkasan mendetail",
     summarize: "Ringkas",
-    result: "Hasil"
+    result: "Hasil",
+
+    emptyInput: "Tulis atau tempel teks terlebih dahulu.",
+    waitingSummary: "Tunggu ringkasannya...",
+    writingSummary: "Sedang menulis ringkasan...",
+    copied: "Disalin!",
+    listening: "Sedang mendengarkan...",
+    stoppedListening: "Berhenti mendengarkan",
+    speechNotSupported: "Browser Anda tidak mendukung speech-to-text.",
+    serverError: "Kesalahan server, coba lagi...",
+    emptySummary: "Ringkasan kosong"
   },
 
   "zh-CN": {
@@ -60,6 +90,16 @@ const translations = {
     long: "详细",
     longDesc: "详细摘要",
     summarize: "生成摘要",
-    result: "结果"
+    result: "结果",
+
+    emptyInput: "请先输入或粘贴一些文本。",
+    waitingSummary: "请等待摘要生成...",
+    writingSummary: "正在生成摘要...",
+    copied: "已复制！",
+    listening: "正在聆听...",
+    stoppedListening: "已停止聆听",
+    speechNotSupported: "你的浏览器不支持语音转文字。",
+    serverError: "服务器错误，请重试...",
+    emptySummary: "摘要为空"
   }
 };

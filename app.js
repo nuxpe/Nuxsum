@@ -1,54 +1,65 @@
 lucide.createIcons();
-const toast = document.getElementById("toast")
+
+const toast = document.getElementById("toast");
 const inputText = document.getElementById("inputText");
 const btnSummarize = document.getElementById("btnSummarize");
 const output = document.getElementById("output");
 const charCounter = document.getElementById("charCounter");
-const buttonSummarizeText = document.getElementById("btnSummarizeText")
-const btnMic = document.getElementById("btnMic")
+const buttonSummarizeText = document.getElementById("btnSummarizeText");
+const btnMic = document.getElementById("btnMic");
 const copyIconWrapper = document.getElementById("copyIconWrapper");
-// card sizes
+
 const sizeCards = document.querySelectorAll(".summary-size-card");
 let selectedSize = "size-medium";
-//traslations
+
 const languageToggle = document.getElementById("languageToggle");
 const languageMenu = document.getElementById("languageMenu");
 const languageOptions = document.querySelectorAll(".language-option");
 
-// marcar medium por defeito
-sizeCards.forEach((card) => {
-  if (card.dataset.size == "size-medium") {
-    card.classList.add("selected");
-  }
-});
-
-// for thje mic functionality
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+let recognition = null;
 let isListening = false;
 let shouldKeepListening = false;
 let finalTranscript = "";
 
+function getCurrentLanguage() {
+  return localStorage.getItem("nuxsum_lang") || "en-US";
+}
+
+function t(key) {
+  const lang = getCurrentLanguage();
+  return translations[lang]?.[key] || translations["en-US"]?.[key] || key;
+}
+
+sizeCards.forEach((card) => {
+  if (card.dataset.size === "size-medium") {
+    card.classList.add("selected");
+  }
+});
+
 if (!SpeechRecognition) {
   console.log("Speech recognition not supported in this browser.");
-  showToast("Your browser doesn't support speech-to-text.");
+  showToast(t("speechNotSupported"));
 } else {
-  const recognition = new SpeechRecognition();
+  recognition = new SpeechRecognition();
 
-  recognition.lang = localStorage.getItem("nuxsum_lang") || "en-US";
+  recognition.lang = getCurrentLanguage();
   recognition.interimResults = true;
   recognition.maxAlternatives = 1;
   recognition.continuous = true;
 
   btnMic.addEventListener("click", () => {
+    recognition.lang = getCurrentLanguage();
+
     if (!shouldKeepListening) {
       shouldKeepListening = true;
       recognition.start();
-      showToast("Listening...");
+      showToast(t("listening"));
     } else {
       shouldKeepListening = false;
       recognition.stop();
-      showToast("Stopped listening");
+      showToast(t("stoppedListening"));
     }
   });
 
@@ -79,14 +90,18 @@ if (!SpeechRecognition) {
     btnMic.classList.remove("listening");
 
     if (shouldKeepListening) {
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (error) {
+        console.log("Recognition restart blocked:", error);
+      }
     }
   });
 
+  recognition.addEventListener("error", (event) => {
+    console.log("Speech recognition error:", event.error);
+  });
 }
-
-
-// event listerns
 
 languageToggle.addEventListener("click", () => {
   languageMenu.classList.toggle("hidden");
@@ -95,23 +110,25 @@ languageToggle.addEventListener("click", () => {
 document.addEventListener("click", (event) => {
   const dropdown = document.querySelector(".language-dropdown");
 
-  if (!dropdown.contains(event.target)) {
+  if (dropdown && !dropdown.contains(event.target)) {
     languageMenu.classList.add("hidden");
   }
 });
 
-languageOptions.forEach(option => {
+languageOptions.forEach((option) => {
   option.addEventListener("click", () => {
     const lang = option.dataset.lang;
 
-    applyLanguage(lang);
-    recognition.lang = lang;
     localStorage.setItem("nuxsum_lang", lang);
+    applyLanguage(lang);
+
+    if (recognition) {
+      recognition.lang = lang;
+    }
 
     languageMenu.classList.add("hidden");
   });
 });
-
 
 copyIconWrapper.addEventListener("click", () => {
   const text = output.textContent.trim();
@@ -123,8 +140,7 @@ copyIconWrapper.addEventListener("click", () => {
   copyIconWrapper.innerHTML = '<i data-lucide="check"></i>';
   copyIconWrapper.style.pointerEvents = "none";
   lucide.createIcons();
-  showToast("Copied!")
-
+  showToast(t("copied"));
 
   setTimeout(() => {
     copyIconWrapper.innerHTML = '<i data-lucide="clipboard"></i>';
@@ -133,12 +149,10 @@ copyIconWrapper.addEventListener("click", () => {
   }, 1000);
 });
 
-
-
 charCounter.textContent = "0 / 12000";
 
 inputText.addEventListener("input", () => {
-  const count = inputText.value.trim().length;
+  const count = inputText.value.length;
 
   charCounter.textContent = `${count} / 12000`;
 
@@ -151,13 +165,9 @@ inputText.addEventListener("input", () => {
   }
 });
 
-// logica dos cards
 sizeCards.forEach((card) => {
   card.addEventListener("click", () => {
-    sizeCards.forEach((item) => {
-      item.classList.remove("selected");
-    });
-
+    sizeCards.forEach((item) => item.classList.remove("selected"));
     card.classList.add("selected");
     selectedSize = card.dataset.size;
   });
@@ -168,37 +178,59 @@ btnSummarize.addEventListener("click", async () => {
   const size = selectedSize;
 
   if (!text) {
-    output.textContent = "write or paste any text first.";
+    output.textContent = t("emptyInput");
     return;
   }
 
   btnSummarize.disabled = true;
-  btnSummarize.classList.add("desable-btn")
-  buttonSummarizeText.textContent = "wait for the summary...";
-  output.textContent = "Writing the summary...";
+  btnSummarize.classList.add("desabled-btn");
+  buttonSummarizeText.textContent = t("waitingSummary");
+  output.textContent = t("writingSummary");
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
 
   try {
     const res = await fetch("/api/summarize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, size })
+      body: JSON.stringify({ text, size, lang: getCurrentLanguage() }),
+      signal: controller.signal
     });
 
-    const data = await res.json();
+    clearTimeout(timeoutId);
+
+    const contentType = res.headers.get("content-type") || "";
+
+    let data = {};
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const rawText = await res.text();
+      console.log("Resposta não JSON:", rawText);
+      throw new Error("Invalid server response");
+    }
 
     if (!res.ok) {
-      output.textContent = data.error || "Server Error, try again...";
+      output.textContent = data.error || t("serverError");
       return;
     }
 
-    output.textContent = data.summary || "Empty summary";
+    output.textContent = data.summary || t("emptySummary");
+
   } catch (e) {
-    console.error(e);
-    output.textContent = "Erro: " + e.message;
+    clearTimeout(timeoutId);
+    console.error("Summarize error:", e);
+
+    if (e.name === "AbortError") {
+      output.textContent = t("requestTimeout");
+    } else {
+      output.textContent = t("serverError");
+    }
   } finally {
     btnSummarize.disabled = false;
-    btnSummarize.classList.remove("desable-btn")
-    buttonSummarizeText.textContent = "Summarize";
+    btnSummarize.classList.remove("desabled-btn");
+    buttonSummarizeText.textContent = t("summarize");
   }
 });
 
@@ -212,26 +244,28 @@ function showToast(text) {
 }
 
 function applyLanguage(lang) {
-
-  const t = translations[lang];
+  const tObj = translations[lang];
 
   document.documentElement.lang = lang;
 
-  document.querySelectorAll("[data-i18n]").forEach(element => {
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.dataset.i18n;
-    if (t[key]) element.textContent = t[key];
+    if (tObj[key]) element.textContent = tObj[key];
   });
 
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     const key = element.dataset.i18nPlaceholder;
-    if (t[key]) element.placeholder = t[key];
+    if (tObj[key]) element.placeholder = tObj[key];
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("nuxsum_lang") || "en-US";
+  const savedLang = getCurrentLanguage();
   applyLanguage(savedLang);
-  recognition.lang = savedLang;
+
+  if (recognition) {
+    recognition.lang = savedLang;
+  }
 
   lucide.createIcons();
 });
