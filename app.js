@@ -25,6 +25,8 @@ let selectedSize = "size-medium";
 let recognition = null;
 let isListening = false;
 let finalTranscript = "";
+let recognitionBaseText = "";
+
 
 /* =========================
    IDIOMA
@@ -200,7 +202,9 @@ function initSpeechRecognition() {
     }
 
     if (!isListening) {
-      finalTranscript = inputText.value ? inputText.value.trim() + " " : "";
+      recognitionBaseText = inputText.value.trim();
+      finalTranscript = "";
+
       recognition.lang = getCurrentLanguage();
 
       try {
@@ -212,24 +216,29 @@ function initSpeechRecognition() {
         console.error("Speech start error:", error);
       }
     } else {
-      recognition.stop();
       isListening = false;
+      recognition.stop();
       btnMic.classList.remove("listening");
       showToast(t("stoppedListening"));
     }
   });
 
   recognition.addEventListener("result", (event) => {
+    let interimTranscript = "";
 
-    let transcript = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
 
-    for (let i = 0; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript + " ";
+      } else {
+        interimTranscript += transcript;
+      }
     }
 
-    inputText.value = transcript;
+    const base = recognitionBaseText ? recognitionBaseText + " " : "";
+    inputText.value = base + finalTranscript + interimTranscript;
     inputText.dispatchEvent(new Event("input"));
-
   });
 
   recognition.addEventListener("end", () => {
