@@ -1,6 +1,6 @@
 const translations = {
   "en-US": {
-    title1: "Distill any text",
+    title1: "Summarize any text",
     title2: "into its essence.",
     subtitle: "Paste a wall of text. Pick your length. Get a clean summary in seconds.",
     placeholder: "Paste the text here...",
@@ -16,7 +16,7 @@ const translations = {
   },
 
   "pt-PT": {
-    title1: "Destila qualquer texto",
+    title1: "Resuma qualquer texto",
     title2: "até à sua essência.",
     subtitle: "Cole um texto longo. Escolha o tamanho. Obtenha um resumo limpo em segundos.",
     placeholder: "Cole o texto aqui...",

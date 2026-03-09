@@ -35,8 +35,8 @@ if (!SpeechRecognition) {
 } else {
   const recognition = new SpeechRecognition();
 
-  recognition.lang = "pt-PT";
-  recognition.interimResults = false;
+  recognition.lang = localStorage.getItem("nuxsum_lang") || "en-US";
+  recognition.interimResults = true;
   recognition.maxAlternatives = 1;
   recognition.continuous = true;
 
