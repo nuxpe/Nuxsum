@@ -223,23 +223,30 @@ function initSpeechRecognition() {
     }
   });
 
-  recognition.addEventListener("result", (event) => {
-    let interimTranscript = "";
+recognition.addEventListener("result", (event) => {
 
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
+  let finalText = "";
+  let interimText = "";
 
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript + " ";
-      } else {
-        interimTranscript += transcript;
-      }
+  for (let i = 0; i < event.results.length; i++) {
+
+    const transcript = event.results[i][0].transcript;
+
+    if (event.results[i].isFinal) {
+      finalText += transcript + " ";
+    } else {
+      interimText += transcript;
     }
 
-    const base = recognitionBaseText ? recognitionBaseText + " " : "";
-    inputText.value = base + finalTranscript + interimTranscript;
-    inputText.dispatchEvent(new Event("input"));
-  });
+  }
+
+  const base = recognitionBaseText ? recognitionBaseText + " " : "";
+
+  inputText.value = base + finalText + interimText;
+
+  inputText.dispatchEvent(new Event("input"));
+
+});
 
   recognition.addEventListener("end", () => {
     btnMic.classList.remove("listening");
