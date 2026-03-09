@@ -514,3 +514,70 @@ button:hover {
 .footer-inner a:hover {
     color: white;
 }
+
+
+/*trasnlations*/
+.language-dropdown {
+  position: relative;
+  margin-left: auto;
+}
+
+.language-toggle {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  color: white;
+}
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: fit-content;
+  background: var(--color-dark-blue);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 12px 30px var(--color-bg);
+  z-index: 1000;
+}
+
+.language-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size:var(--font-bold);
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.language-option:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.flag-emoji {
+  font-size: var(--text-xs);
+  line-height: 1;
+}
+
+.hidden {
+  display: none;
+}
+
+.flag-icon{
+  height: 20px;
+}

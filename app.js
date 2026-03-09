@@ -10,6 +10,10 @@ const copyIconWrapper = document.getElementById("copyIconWrapper");
 // card sizes
 const sizeCards = document.querySelectorAll(".summary-size-card");
 let selectedSize = "size-medium";
+//traslations
+const languageToggle = document.getElementById("languageToggle");
+const languageMenu = document.getElementById("languageMenu");
+const languageOptions = document.querySelectorAll(".language-option");
 
 // marcar medium por defeito
 sizeCards.forEach((card) => {
@@ -83,6 +87,31 @@ if (!SpeechRecognition) {
 
 
 // event listerns
+
+languageToggle.addEventListener("click", () => {
+  languageMenu.classList.toggle("hidden");
+});
+
+document.addEventListener("click", (event) => {
+  const dropdown = document.querySelector(".language-dropdown");
+
+  if (!dropdown.contains(event.target)) {
+    languageMenu.classList.add("hidden");
+  }
+});
+
+languageOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    const lang = option.dataset.lang;
+
+    applyLanguage(lang);
+    recognition.lang = lang;
+    localStorage.setItem("nuxsum_lang", lang);
+
+    languageMenu.classList.add("hidden");
+  });
+});
+
 
 copyIconWrapper.addEventListener("click", () => {
   const text = output.textContent.trim();
@@ -181,3 +210,28 @@ function showToast(text) {
     toast.classList.remove("show");
   }, 2000);
 }
+
+function applyLanguage(lang) {
+
+  const t = translations[lang];
+
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll("[data-i18n]").forEach(element => {
+    const key = element.dataset.i18n;
+    if (t[key]) element.textContent = t[key];
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+    const key = element.dataset.i18nPlaceholder;
+    if (t[key]) element.placeholder = t[key];
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("nuxsum_lang") || "en-US";
+  applyLanguage(savedLang);
+  recognition.lang = savedLang;
+
+  lucide.createIcons();
+});
