@@ -24,7 +24,7 @@ let shouldKeepListening = false;
 let finalTranscript = "";
 
 function getCurrentLanguage() {
-  return localStorage.getItem("nuxsum_lang") || "en-US";
+  return localStorage.getItem("nuxsum_lang") || getDefaultBrowserLanguage();
 }
 
 function t(key) {
@@ -269,3 +269,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   lucide.createIcons();
 });
+
+function getDefaultBrowserLanguage() {
+  const browserLang = navigator.language || "en-US";
+
+  if (browserLang.startsWith("pt")) return "pt-PT";
+  if (browserLang.startsWith("en")) return "en-US";
+  if (browserLang.startsWith("id")) return "id-ID";
+  if (browserLang.startsWith("zh")) return "zh-CN";
+
+  return "en-US";
+}
