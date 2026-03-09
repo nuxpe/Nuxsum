@@ -445,8 +445,18 @@ button:hover {
   min-height: 100vh;
 }
 
+.ad-sidebar-left {
+  grid-column: 1;
+}
+
 .app-shell {
+  grid-column: 2;
   width: 100%;
+  min-width: 0;
+}
+
+.ad-sidebar-right {
+  grid-column: 3;
 }
 
 .ad-sidebar {
@@ -464,6 +474,12 @@ button:hover {
 @media (max-width: 1200px) {
   .app-layout {
     grid-template-columns: 1fr;
+  }
+
+  .ad-sidebar-left,
+  .ad-sidebar-right,
+  .app-shell {
+    grid-column: 1;
   }
 
   .ad-sidebar {
