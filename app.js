@@ -191,7 +191,7 @@ function initSpeechRecognition() {
 
   recognition = new SpeechRecognition();
   recognition.lang = getCurrentLanguage();
-  recognition.interimResults = true;
+  recognition.interimResults = false;
   recognition.continuous = true;
   recognition.maxAlternatives = 1;
 
@@ -223,30 +223,18 @@ function initSpeechRecognition() {
     }
   });
 
-recognition.addEventListener("result", (event) => {
+  recognition.addEventListener("result", (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript.trim();
 
-  let finalText = "";
-  let interimText = "";
+    if (!transcript) return;
 
-  for (let i = 0; i < event.results.length; i++) {
+    inputText.value = recognitionBaseText
+      ? `${recognitionBaseText} ${transcript}`.trim()
+      : transcript;
 
-    const transcript = event.results[i][0].transcript;
-
-    if (event.results[i].isFinal) {
-      finalText += transcript + " ";
-    } else {
-      interimText += transcript;
-    }
-
-  }
-
-  const base = recognitionBaseText ? recognitionBaseText + " " : "";
-
-  inputText.value = base + finalText + interimText;
-
-  inputText.dispatchEvent(new Event("input"));
-
-});
+    recognitionBaseText = inputText.value;
+    inputText.dispatchEvent(new Event("input"));
+  });
 
   recognition.addEventListener("end", () => {
     btnMic.classList.remove("listening");
