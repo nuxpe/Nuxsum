@@ -348,6 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applyLanguage(savedLang);
+  initSummarizeButton()
   initSummarySizeCards();
   initCharCounter();
   initCopyButton();

@@ -404,15 +404,45 @@ button:hover {
 }
 
 
-.mic-ondiv{
+.mic-ondiv {
+  all: unset;
   position: absolute;
   bottom: 12px;
   right: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  transition: none !important;
+}
+
+.mic-ondiv:hover,
+.mic-ondiv:focus,
+.mic-ondiv:active {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: none !important;
+}
+
+.mic-ondiv svg {
+  background: transparent;
+  transition: none !important;
 }
 
 .mic-ondiv:hover {
   transform: scale(1.1);
+}
+
+.mic-ondiv:focus{
+  outline: none;
 }
 
 .mic-ondiv:active{
