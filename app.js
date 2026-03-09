@@ -220,20 +220,16 @@ function initSpeechRecognition() {
   });
 
   recognition.addEventListener("result", (event) => {
-    let interimTranscript = "";
 
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
+    let transcript = "";
 
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript + " ";
-      } else {
-        interimTranscript += transcript;
-      }
+    for (let i = 0; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
     }
 
-    inputText.value = finalTranscript + interimTranscript;
+    inputText.value = transcript;
     inputText.dispatchEvent(new Event("input"));
+
   });
 
   recognition.addEventListener("end", () => {
