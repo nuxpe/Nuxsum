@@ -411,12 +411,12 @@ button:hover {
   cursor: pointer;
 }
 
-.mic-ondiv:active{
-  transform: scale(0.9);
+.mic-ondiv:hover {
+  transform: scale(1.1);
 }
 
-.mic-ondiv:hover{
-  transform: scale(1.1);
+.mic-ondiv:active{
+  transform: scale(0.9);
 }
 
 .mic-ondiv.listening{

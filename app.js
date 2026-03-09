@@ -23,6 +23,17 @@ let isListening = false;
 let shouldKeepListening = false;
 let finalTranscript = "";
 
+function getDefaultBrowserLanguage() {
+  const browserLang = navigator.language || "en-US";
+
+  if (browserLang.startsWith("pt")) return "pt-PT";
+  if (browserLang.startsWith("en")) return "en-US";
+  if (browserLang.startsWith("id")) return "id-ID";
+  if (browserLang.startsWith("zh")) return "zh-CN";
+
+  return "en-US";
+}
+
 function getCurrentLanguage() {
   return localStorage.getItem("nuxsum_lang") || getDefaultBrowserLanguage();
 }
@@ -50,12 +61,21 @@ if (!SpeechRecognition) {
   recognition.continuous = true;
 
   btnMic.addEventListener("click", () => {
+    if (!recognition) return;
+
     recognition.lang = getCurrentLanguage();
 
     if (!shouldKeepListening) {
       shouldKeepListening = true;
-      recognition.start();
-      showToast(t("listening"));
+      finalTranscript = inputText.value ? inputText.value.trim() + " " : "";
+
+      try {
+        recognition.start();
+        showToast(t("listening"));
+      } catch (error) {
+        console.log("Recognition start blocked:", error);
+        shouldKeepListening = false;
+      }
     } else {
       shouldKeepListening = false;
       recognition.stop();
@@ -100,6 +120,19 @@ if (!SpeechRecognition) {
 
   recognition.addEventListener("error", (event) => {
     console.log("Speech recognition error:", event.error);
+
+    isListening = false;
+    btnMic.classList.remove("listening");
+
+    if (event.error === "not-allowed") {
+      shouldKeepListening = false;
+      showToast(t("speechNotSupported"));
+      return;
+    }
+
+    if (event.error === "aborted") {
+      return;
+    }
   });
 }
 
@@ -260,7 +293,13 @@ function applyLanguage(lang) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = getCurrentLanguage();
+  let savedLang = localStorage.getItem("nuxsum_lang");
+
+  if (!savedLang) {
+    savedLang = getDefaultBrowserLanguage();
+    localStorage.setItem("nuxsum_lang", savedLang);
+  }
+
   applyLanguage(savedLang);
 
   if (recognition) {
@@ -269,14 +308,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   lucide.createIcons();
 });
-
-function getDefaultBrowserLanguage() {
-  const browserLang = navigator.language || "en-US";
-
-  if (browserLang.startsWith("pt")) return "pt-PT";
-  if (browserLang.startsWith("en")) return "en-US";
-  if (browserLang.startsWith("id")) return "id-ID";
-  if (browserLang.startsWith("zh")) return "zh-CN";
-
-  return "en-US";
-}
