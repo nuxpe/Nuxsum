@@ -433,3 +433,68 @@ button:hover {
 .relative {
   position: relative;
 }
+
+
+/*ADS*/
+.app-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 900px) 180px;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.app-shell {
+  width: 100%;
+}
+
+.ad-sidebar {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+}
+
+.ad-box {
+  width: 160px;
+  min-height: 600px;
+  border-radius: 16px;
+}
+
+@media (max-width: 1200px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-sidebar {
+    display: none;
+  }
+}
+
+/*Footer*/
+.footer {
+    width: 100%;
+    margin-top: 60px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-inner {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+}
+
+.footer-inner a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.6);
+    transition: color 0.2s ease;
+}
+
+.footer-inner a:hover {
+    color: white;
+}
