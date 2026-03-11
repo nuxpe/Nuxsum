@@ -416,15 +416,15 @@ async function summarizeFromUrl(url, size) {
 
     clearTimeout(timeoutId);
 
-    const contentType = response.headers.get("content-type") || "";
+    const rawText = await response.text();
+    console.log("RAW /api/extract response:", rawText);
 
-    if (!contentType.includes("application/json")) {
-      const rawText = await response.text();
-      console.error("Resposta não JSON do /api/extract:", rawText);
-      throw new Error("O endpoint de URL não devolveu JSON.");
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      throw new Error(`Resposta não JSON do /api/extract: ${rawText}`);
     }
-
-    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.error || "Erro ao resumir URL");
