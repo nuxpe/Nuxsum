@@ -1,3 +1,4 @@
+lucide.createIcons()
 /* =========================
    ELEMENTOS DOM
 ========================= */
@@ -15,10 +16,13 @@ const languageToggle = document.getElementById("languageToggle");
 const languageMenu = document.getElementById("languageMenu");
 const languageOptions = document.querySelectorAll(".language-option");
 const languageDropdown = document.querySelector(".language-dropdown");
-
-/* opcionais, caso cries depois */
+const textInputWrapper = document.getElementById("textInputWrapper");
+const urlInputWrapper = document.getElementById("urlInputWrapper");
+const fileInputWrapper = document.getElementById("fileInputWrapper");
 const inputUrl = document.getElementById("inputUrl");
+const fileDropzone = document.getElementById("fileDropzone");
 const inputFile = document.getElementById("inputFile");
+const selectedFileName = document.getElementById("selectedFileName");
 
 /* =========================
    ESTADO
@@ -117,35 +121,25 @@ function initSummarySizeCards() {
 /* =========================
    SUMMARY INPUT TABS
 ========================= */
-function updateInputModeUI() {
-  if (!inputText && !inputUrl && !inputFile) return;
+function updateInputTypeUI() {
+  textInputWrapper.classList.add("hidden");
+  urlInputWrapper.classList.add("hidden");
+  fileInputWrapper.classList.add("hidden");
 
-  if (inputText) {
-    inputText.style.display = selectedInputType === "Text" ? "block" : "none";
+  if (selectedInputType === "Text") {
+    textInputWrapper.classList.remove("hidden");
+  } else if (selectedInputType === "URL") {
+    urlInputWrapper.classList.remove("hidden");
+  } else if (selectedInputType === "File") {
+    fileInputWrapper.classList.remove("hidden");
   }
 
-  if (inputUrl) {
-    inputUrl.style.display = selectedInputType === "URL" ? "block" : "none";
-  }
-
-  if (inputFile) {
-    inputFile.style.display = selectedInputType === "File" ? "block" : "none";
-  }
-
-  if (charCounter) {
-    charCounter.style.display = selectedInputType === "Text" ? "block" : "none";
-  }
-
-  if (btnMic) {
-    btnMic.style.display = selectedInputType === "Text" ? "flex" : "none";
-  }
+  output.textContent = "";
 }
 
 function initSummaryInputTypeTabs() {
   inputTypeTabs.forEach((tab) => {
-    const inputType = tab.dataset.inputType;
-
-    if (inputType === "Text") {
+    if (tab.dataset.inputType === "Text") {
       tab.classList.add("active");
       selectedInputType = "Text";
     }
@@ -153,14 +147,15 @@ function initSummaryInputTypeTabs() {
     tab.addEventListener("click", () => {
       inputTypeTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
-      selectedInputType = inputType || "Text";
+      selectedInputType = tab.dataset.inputType;
 
-      updateInputModeUI();
+      updateInputTypeUI();
+
       console.log("selectedInputType:", selectedInputType);
     });
   });
 
-  updateInputModeUI();
+  updateInputTypeUI();
 }
 
 /* =========================
@@ -438,19 +433,12 @@ async function summarizeFromUrl(url, size) {
    BOTÃO SUMMARIZE
 ========================= */
 async function handleSummarizeClick() {
-  if (!output) return;
-
   if (selectedInputType === "Text") {
     await summarizeText();
     return;
   }
 
   if (selectedInputType === "URL") {
-    if (!inputUrl) {
-      output.textContent = "URL mode ainda não está ligado na interface.";
-      return;
-    }
-
     const url = inputUrl.value.trim();
 
     if (!url) {
@@ -461,19 +449,14 @@ async function handleSummarizeClick() {
     btnSummarize.disabled = true;
     btnSummarize.classList.add("disabled-btn");
     buttonSummarizeText.textContent = t("waitingSummary");
-    output.textContent = t("writingSummary");
+    output.textContent = "A processar URL...";
 
     try {
       const data = await summarizeFromUrl(url, selectedSize);
       output.textContent = data.summary || t("emptySummary");
     } catch (error) {
       console.error("URL summarize error:", error);
-
-      if (error.name === "AbortError") {
-        output.textContent = t("requestTimeout");
-      } else {
-        output.textContent = error.message || t("serverError");
-      }
+      output.textContent = error.message || t("serverError");
     } finally {
       btnSummarize.disabled = false;
       btnSummarize.classList.remove("disabled-btn");
@@ -484,7 +467,12 @@ async function handleSummarizeClick() {
   }
 
   if (selectedInputType === "File") {
-    output.textContent = "File mode ainda não está implementado.";
+    if (!inputFile.files || !inputFile.files[0]) {
+      output.textContent = "Escolhe um ficheiro primeiro.";
+      return;
+    }
+
+    output.textContent = "Upload de ficheiros ainda não está implementado.";
   }
 }
 
@@ -492,6 +480,60 @@ function initSummarizeButton() {
   if (!btnSummarize) return;
   btnSummarize.addEventListener("click", handleSummarizeClick);
 }
+/* =========================
+   UPLOAD FILES
+========================= */
+function updateSelectedFileUI(file) {
+  if (!selectedFileName) return;
+
+  if (!file) {
+    selectedFileName.textContent = "";
+    selectedFileName.classList.add("hidden");
+    return;
+  }
+
+  const maxSize = 10 * 1024 * 1024;
+
+  if (file.size > maxSize) {
+    selectedFileName.textContent = "File is too large. Max size is 20MB.";
+    selectedFileName.classList.remove("hidden");
+    inputFile.value = "";
+    return;
+  }
+
+  selectedFileName.textContent = `Selected file: ${file.name}`;
+  selectedFileName.classList.remove("hidden");
+}
+
+function initFileUpload() {
+  if (!fileDropzone || !inputFile) return;
+
+  inputFile.addEventListener("change", () => {
+    const file = inputFile.files?.[0];
+    updateSelectedFileUI(file);
+  });
+
+  fileDropzone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    fileDropzone.classList.add("dragover");
+  });
+
+  fileDropzone.addEventListener("dragleave", () => {
+    fileDropzone.classList.remove("dragover");
+  });
+
+  fileDropzone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    fileDropzone.classList.remove("dragover");
+
+    const files = event.dataTransfer?.files;
+    if (!files || !files.length) return;
+
+    inputFile.files = files;
+    updateSelectedFileUI(files[0]);
+  });
+}
+
 
 /* =========================
    INIT
@@ -506,6 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyLanguage(savedLang);
   initSummarizeButton();
+  initFileUpload()
   initSummarySizeCards();
   initSummaryInputTypeTabs();
   initCharCounter();
@@ -515,3 +558,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   lucide.createIcons();
 });
+

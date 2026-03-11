@@ -668,7 +668,7 @@ button:hover {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .flag-icon{
@@ -699,3 +699,88 @@ button:hover {
 .align-items-center{
   align-items: center;
 }
+
+.url-input,
+.file-input {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-dark-blue);
+  color: var(--color-text);
+  padding: 14px 16px;
+  outline: none;
+}
+
+.custom-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-washed-blue);
+  color: var(--color-text);
+  outline: none;
+}
+
+.file-dropzone {
+  width: 100%;
+  min-height: 180px;
+  border: 2px dashed var(--color-border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.01);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.file-dropzone:hover {
+  border-color: var(--color-primary);
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.file-dropzone.dragover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-shadow);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.file-dropzone-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+}
+
+.file-dropzone-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.file-dropzone-subtitle {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.selected-file-name {
+  margin-top: 12px;
+  color: var(--color-text);
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.hidden {
+  display: none !important;
+}
+
