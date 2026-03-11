@@ -1,5 +1,3 @@
-lucide.createIcons();
-
 /* =========================
    ELEMENTOS DOM
 ========================= */
@@ -11,22 +9,26 @@ const charCounter = document.getElementById("charCounter");
 const buttonSummarizeText = document.getElementById("btnSummarizeText");
 const btnMic = document.getElementById("btnMic");
 const copyIconWrapper = document.getElementById("copyIconWrapper");
-
+const inputTypeTabs = document.querySelectorAll(".inputTypeOption");
 const sizeCards = document.querySelectorAll(".summary-size-card");
 const languageToggle = document.getElementById("languageToggle");
 const languageMenu = document.getElementById("languageMenu");
 const languageOptions = document.querySelectorAll(".language-option");
 const languageDropdown = document.querySelector(".language-dropdown");
 
+/* opcionais, caso cries depois */
+const inputUrl = document.getElementById("inputUrl");
+const inputFile = document.getElementById("inputFile");
+
 /* =========================
    ESTADO
 ========================= */
 let selectedSize = "size-medium";
+let selectedInputType = "Text";
 let recognition = null;
 let isListening = false;
 let finalTranscript = "";
 let recognitionBaseText = "";
-
 
 /* =========================
    IDIOMA
@@ -48,23 +50,27 @@ function getCurrentLanguage() {
 
 function t(key) {
   const lang = getCurrentLanguage();
-  return translations[lang]?.[key] || translations["en-US"]?.[key] || key;
+  return translations?.[lang]?.[key] || translations?.["en-US"]?.[key] || key;
 }
 
 function applyLanguage(lang) {
-  const tObj = translations[lang];
+  const tObj = translations?.[lang];
   if (!tObj) return;
 
   document.documentElement.lang = lang;
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.dataset.i18n;
-    if (tObj[key]) element.textContent = tObj[key];
+    if (tObj[key]) {
+      element.textContent = tObj[key];
+    }
   });
 
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     const key = element.dataset.i18nPlaceholder;
-    if (tObj[key]) element.placeholder = tObj[key];
+    if (tObj[key]) {
+      element.placeholder = tObj[key];
+    }
   });
 
   if (recognition) {
@@ -81,6 +87,8 @@ function setLanguage(lang) {
    TOAST
 ========================= */
 function showToast(text) {
+  if (!toast) return;
+
   toast.textContent = text;
   toast.classList.add("show");
 
@@ -107,9 +115,60 @@ function initSummarySizeCards() {
 }
 
 /* =========================
+   SUMMARY INPUT TABS
+========================= */
+function updateInputModeUI() {
+  if (!inputText && !inputUrl && !inputFile) return;
+
+  if (inputText) {
+    inputText.style.display = selectedInputType === "Text" ? "block" : "none";
+  }
+
+  if (inputUrl) {
+    inputUrl.style.display = selectedInputType === "URL" ? "block" : "none";
+  }
+
+  if (inputFile) {
+    inputFile.style.display = selectedInputType === "File" ? "block" : "none";
+  }
+
+  if (charCounter) {
+    charCounter.style.display = selectedInputType === "Text" ? "block" : "none";
+  }
+
+  if (btnMic) {
+    btnMic.style.display = selectedInputType === "Text" ? "flex" : "none";
+  }
+}
+
+function initSummaryInputTypeTabs() {
+  inputTypeTabs.forEach((tab) => {
+    const inputType = tab.dataset.inputType;
+
+    if (inputType === "Text") {
+      tab.classList.add("active");
+      selectedInputType = "Text";
+    }
+
+    tab.addEventListener("click", () => {
+      inputTypeTabs.forEach((item) => item.classList.remove("active"));
+      tab.classList.add("active");
+      selectedInputType = inputType || "Text";
+
+      updateInputModeUI();
+      console.log("selectedInputType:", selectedInputType);
+    });
+  });
+
+  updateInputModeUI();
+}
+
+/* =========================
    CONTADOR DE CARACTERES
 ========================= */
 function updateCharCounter() {
+  if (!inputText || !charCounter) return;
+
   const count = inputText.value.length;
   charCounter.textContent = `${count} / 12000`;
 
@@ -123,6 +182,8 @@ function updateCharCounter() {
 }
 
 function initCharCounter() {
+  if (!charCounter || !inputText) return;
+
   charCounter.textContent = "0 / 12000";
   inputText.addEventListener("input", updateCharCounter);
 }
@@ -131,6 +192,8 @@ function initCharCounter() {
    COPY RESULT
 ========================= */
 function initCopyButton() {
+  if (!copyIconWrapper || !output) return;
+
   copyIconWrapper.addEventListener("click", async () => {
     const text = output.textContent.trim();
     if (!text) return;
@@ -159,12 +222,14 @@ function initCopyButton() {
    DROPDOWN DE IDIOMA
 ========================= */
 function initLanguageDropdown() {
+  if (!languageToggle || !languageMenu || !languageDropdown) return;
+
   languageToggle.addEventListener("click", () => {
     languageMenu.classList.toggle("hidden");
   });
 
   document.addEventListener("click", (event) => {
-    if (languageDropdown && !languageDropdown.contains(event.target)) {
+    if (!languageDropdown.contains(event.target)) {
       languageMenu.classList.add("hidden");
     }
   });
@@ -172,6 +237,8 @@ function initLanguageDropdown() {
   languageOptions.forEach((option) => {
     option.addEventListener("click", () => {
       const lang = option.dataset.lang;
+      if (!lang) return;
+
       setLanguage(lang);
       languageMenu.classList.add("hidden");
     });
@@ -184,7 +251,7 @@ function initLanguageDropdown() {
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  if (!SpeechRecognition) {
+  if (!SpeechRecognition || !btnMic || !inputText) {
     console.log("Speech recognition not supported in this browser.");
     return;
   }
@@ -204,7 +271,6 @@ function initSpeechRecognition() {
     if (!isListening) {
       recognitionBaseText = inputText.value.trim();
       finalTranscript = "";
-
       recognition.lang = getCurrentLanguage();
 
       try {
@@ -266,10 +332,10 @@ function initSpeechRecognition() {
 }
 
 /* =========================
-   SUMMARIZE
+   SUMMARIZE TEXT
 ========================= */
 async function summarizeText() {
-  const text = inputText.value.trim();
+  const text = inputText?.value.trim();
   const size = selectedSize;
 
   if (!text) {
@@ -332,8 +398,99 @@ async function summarizeText() {
   }
 }
 
+/* =========================
+   SUMMARIZE URL
+========================= */
+async function summarizeFromUrl(url, size) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+  try {
+    const response = await fetch("/api/extract", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url,
+        size,
+        lang: getCurrentLanguage()
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Erro ao resumir URL");
+    }
+
+    return data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
+
+/* =========================
+   BOTÃO SUMMARIZE
+========================= */
+async function handleSummarizeClick() {
+  if (!output) return;
+
+  if (selectedInputType === "Text") {
+    await summarizeText();
+    return;
+  }
+
+  if (selectedInputType === "URL") {
+    if (!inputUrl) {
+      output.textContent = "URL mode ainda não está ligado na interface.";
+      return;
+    }
+
+    const url = inputUrl.value.trim();
+
+    if (!url) {
+      output.textContent = "Insere uma URL primeiro.";
+      return;
+    }
+
+    btnSummarize.disabled = true;
+    btnSummarize.classList.add("disabled-btn");
+    buttonSummarizeText.textContent = t("waitingSummary");
+    output.textContent = t("writingSummary");
+
+    try {
+      const data = await summarizeFromUrl(url, selectedSize);
+      output.textContent = data.summary || t("emptySummary");
+    } catch (error) {
+      console.error("URL summarize error:", error);
+
+      if (error.name === "AbortError") {
+        output.textContent = t("requestTimeout");
+      } else {
+        output.textContent = error.message || t("serverError");
+      }
+    } finally {
+      btnSummarize.disabled = false;
+      btnSummarize.classList.remove("disabled-btn");
+      buttonSummarizeText.textContent = t("summarize");
+    }
+
+    return;
+  }
+
+  if (selectedInputType === "File") {
+    output.textContent = "File mode ainda não está implementado.";
+  }
+}
+
 function initSummarizeButton() {
-  btnSummarize.addEventListener("click", summarizeText);
+  if (!btnSummarize) return;
+  btnSummarize.addEventListener("click", handleSummarizeClick);
 }
 
 /* =========================
@@ -348,8 +505,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applyLanguage(savedLang);
-  initSummarizeButton()
+  initSummarizeButton();
   initSummarySizeCards();
+  initSummaryInputTypeTabs();
   initCharCounter();
   initCopyButton();
   initLanguageDropdown();

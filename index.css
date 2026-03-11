@@ -11,7 +11,7 @@
   --color-surface: #27292c;
   --color-primary: #3b82f6;
   --color-primary-hover: #2563eb;
-  --color-primary-shadow: #3b83f66e;
+  --color-primary-shadow: #3b83f61f;
   --color-text: #e2e8f0;
   --color-muted: #94a3b8;
   --color-border: #334155;
@@ -138,6 +138,7 @@
 .bg-surface { background: var(--color-surface); }
 .bg-dark { background: var(--color-dark-blue); }
 .bg-primary { background: var(--color-primary); }
+.bg-washed-blue { background: var(--color-washed-blue);}
 
 /* text alignment */
 .text-left { text-align: left; }
@@ -159,6 +160,68 @@
 .text-opacity-40 { opacity: 0.4; }
 .text-opacity-30 { opacity: 0.3; }
 .text-opacity-20 { opacity: 0.2; }
+
+.border-0 {
+  border-width: 0;
+}
+
+.border-1 {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.border-2 {
+  border-width: 2px;
+  border-style: solid;
+}
+
+.border-3 {
+  border-width: 3px;
+  border-style: solid;
+}
+
+.border-4 {
+  border-width: 4px;
+  border-style: solid;
+}
+
+.border-border {
+  border-color: var(--color-border);
+}
+
+/* border colors baseadas nas tuas variáveis */
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-surface {
+  border-color: var(--color-surface);
+}
+
+.border-bg {
+  border-color: var(--color-bg);
+}
+
+.border-text {
+  border-color: var(--color-text);
+}
+
+.border-muted {
+  border-color: var(--color-muted);
+}
+
+.border-border {
+  border-color: var(--color-border);
+}
+
+.border-dark-blue {
+  border-color: var(--color-dark-blue);
+}
+
+.border-washed-blue {
+  border-color: var(--color-washed-blue);
+}
 
 .resume-button{
   width: 100%;
@@ -610,4 +673,29 @@ button:hover {
 
 .flag-icon{
   height: 20px;
+}
+
+.inputTypeOption{
+
+  flex: 1;
+  cursor: pointer;
+  background-color: var(--color-washed-blue);
+  transition: 0.2s;
+  padding: var(--space-m);
+}
+
+.inputTypeOption.active{
+  border-radius: 20px;
+  background-color: var(--color-primary-shadow);
+  color: var(--color-primary);
+  opacity: 100%;
+  
+}
+
+.justify-content{
+  justify-content: center;
+}
+
+.align-items-center{
+  align-items: center;
 }
