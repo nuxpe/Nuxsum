@@ -416,6 +416,14 @@ async function summarizeFromUrl(url, size) {
 
     clearTimeout(timeoutId);
 
+    const contentType = response.headers.get("content-type") || "";
+
+    if (!contentType.includes("application/json")) {
+      const rawText = await response.text();
+      console.error("Resposta não JSON do /api/extract:", rawText);
+      throw new Error("O endpoint de URL não devolveu JSON.");
+    }
+
     const data = await response.json();
 
     if (!response.ok) {
