@@ -416,23 +416,29 @@ async function summarizeFromUrl(url, size) {
 
     clearTimeout(timeoutId);
 
-    const rawText = await response.text();
-    console.log("RAW /api/extract response:", rawText);
+    const contentType = response.headers.get("content-type") || "";
+    let data = {};
 
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      throw new Error(`Resposta não JSON do /api/extract: ${rawText}`);
+    if (contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      const rawText = await response.text();
+      console.error("Non-JSON response from /api/extract:", rawText);
+      throw new Error("Invalid server response");
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "Erro ao resumir URL");
+      throw new Error(data.error || "Error summarizing URL");
     }
 
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
+
+    if (error.name === "AbortError") {
+      throw new Error("Request timed out");
+    }
+
     throw error;
   }
 }
