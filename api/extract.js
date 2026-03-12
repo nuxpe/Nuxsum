@@ -1,8 +1,11 @@
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
+
 export default async function handler(req, res) {
   try {
     return res.status(200).json({
       ok: true,
-      step: "route works"
+      step: "imports work"
     });
   } catch (error) {
     return res.status(500).json({
