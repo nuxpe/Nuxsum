@@ -1,20 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "about.html", "use": "@vercel/static" },
-    { "src": "contact.html", "use": "@vercel/static" },
-    { "src": "privacy-policy.html", "use": "@vercel/static" },
-    { "src": "terms.html", "use": "@vercel/static" },
-
-    { "src": "index.css", "use": "@vercel/static" },
-    { "src": "app.js", "use": "@vercel/static" },
-    { "src": "translations.js", "use": "@vercel/static" },
-
-    { "src": "assets/**", "use": "@vercel/static" },
-    { "src": "public/**", "use": "@vercel/static" },
-
-    { "src": "api/summarize.js", "use": "@vercel/node" },
-    { "src": "api/extract.js", "use": "@vercel/node" }
-  ]
+  "functions": {
+    "api/*.js": {
+      "runtime": "@vercel/node"
+    }
+  }
 }
