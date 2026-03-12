@@ -447,12 +447,19 @@ async function summarizeFromUrl(url, size) {
    BOTÃO SUMMARIZE
 ========================= */
 async function handleSummarizeClick() {
+  if (!output || !btnSummarize || !buttonSummarizeText) return;
+
   if (selectedInputType === "Text") {
     await summarizeText();
     return;
   }
 
   if (selectedInputType === "URL") {
+    if (!inputUrl) {
+      output.textContent = t("serverError");
+      return;
+    }
+
     const url = inputUrl.value.trim();
 
     if (!url) {
@@ -481,12 +488,13 @@ async function handleSummarizeClick() {
   }
 
   if (selectedInputType === "File") {
-    if (!inputFile.files || !inputFile.files[0]) {
+    if (!inputFile || !inputFile.files || !inputFile.files[0]) {
       output.textContent = "Escolhe um ficheiro primeiro.";
       return;
     }
 
     output.textContent = "Upload de ficheiros ainda não está implementado.";
+    return;
   }
 }
 
