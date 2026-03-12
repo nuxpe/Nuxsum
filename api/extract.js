@@ -2,14 +2,14 @@ import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
   try {
-    const { url, size = "size-medium", lang = "en-US" } = req.body || {};
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
 
-    if (!url || !url.trim()) {
+    const { url } = req.body || {};
+
+    if (!url) {
       return res.status(400).json({ error: "URL is required" });
     }
 
@@ -20,6 +20,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid URL" });
     }
 
+    console.log("Fetching page:", parsedUrl.toString());
+
     const pageResponse = await fetch(parsedUrl.toString(), {
       headers: {
         "User-Agent":
@@ -28,6 +30,8 @@ export default async function handler(req, res) {
       }
     });
 
+    console.log("Page status:", pageResponse.status);
+
     if (!pageResponse.ok) {
       return res.status(400).json({
         error: `Page not available (${pageResponse.status})`
@@ -35,6 +39,7 @@ export default async function handler(req, res) {
     }
 
     const html = await pageResponse.text();
+    console.log("HTML length:", html.length);
 
     const dom = new JSDOM(html, {
       url: parsedUrl.toString()
@@ -49,69 +54,19 @@ export default async function handler(req, res) {
       });
     }
 
-    const extractedText = article.textContent
-      .trim()
-      .replace(/\s+/g, " ");
-
-    if (extractedText.length < 100) {
-      return res.status(400).json({
-        error: "The extracted content is too short to summarize"
-      });
-    }
-
-    const cleanedText = extractedText.slice(0, 12000);
-
-    const protocol = req.headers["x-forwarded-proto"] || "https";
-    const host = req.headers.host;
-
-    const summarizeResponse = await fetch(`${protocol}://${host}/api/summarize`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        text: cleanedText,
-        size,
-        lang
-      })
-    });
-
-    const summarizeContentType = summarizeResponse.headers.get("content-type") || "";
-    const summarizeRaw = await summarizeResponse.text();
-
-    let summarizeData;
-    try {
-      summarizeData = summarizeContentType.includes("application/json")
-        ? JSON.parse(summarizeRaw)
-        : null;
-    } catch {
-      summarizeData = null;
-    }
-
-    if (!summarizeResponse.ok) {
-      return res.status(500).json({
-        error:
-          summarizeData?.error ||
-          `Summarize endpoint failed: ${summarizeRaw || "Unknown error"}`
-      });
-    }
-
-    if (!summarizeData || !summarizeData.summary) {
-      return res.status(500).json({
-        error: "Summarize endpoint did not return a valid summary"
-      });
-    }
+    const extractedText = article.textContent.trim().replace(/\s+/g, " ");
+    console.log("Extracted text length:", extractedText.length);
 
     return res.status(200).json({
+      ok: true,
       title: article.title || "",
-      extractedText: cleanedText,
-      summary: summarizeData.summary
+      extractedText: extractedText.slice(0, 500)
     });
   } catch (error) {
-    console.error("Extract error:", error);
+    console.error("Extract fatal error:", error);
 
     return res.status(500).json({
-      error: error.message || "Internal error extracting URL content"
+      error: error.message || "Internal extract error"
     });
   }
 }
