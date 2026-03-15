@@ -18,6 +18,7 @@
 
   <link rel="canonical" href="https://nuxsum.vercel.app">
   <link rel="stylesheet" href="index.css" />
+
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6685941846897811"
@@ -70,6 +71,32 @@
                 </button>
               </div>
             </div>
+            <div id="authArea" class="auth-area margin-left-m">
+              <a href="./login.html" id="authLink" class="auth-button">
+                <i data-lucide="user"></i>
+                <span data-i18n="login">Login</span>
+              </a>
+
+              <div id="userDropdown" class="user-dropdown hidden">
+                <button id="userDropdownToggle" type="button" class="auth-button user-dropdown-toggle">
+                  <i data-lucide="user"></i>
+                  <span id="userDisplayName">User</span>
+                  <i data-lucide="chevron-down" class="dropdown-chevron"></i>
+                </button>
+
+                <div id="userDropdownMenu" class="user-dropdown-menu hidden">
+                  <a href="./pricing.html" class="user-dropdown-item">
+                    <i data-lucide="sparkles"></i>
+                    <span data-i18n="pricingProPlan">Pro</span>
+                  </a>
+
+                  <button id="logoutBtn" type="button" class="user-dropdown-item logout-item">
+                    <i data-lucide="log-out"></i>
+                    <span data-i18n="logout">Logout</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -95,7 +122,7 @@
 
         <!-- INPUT TYPE -->
         <div id="SummaryInputTypeGroup"
-          class="bg-washed-blue radius-l border-1 border-border padding-m text-center display-flex gap8 margin-bottom-l">
+          class="bg-washed-blue radius-l border-1 border-border padding-m text-center display-flex gap8 margin-bottom-l radius-l">
 
           <div data-input-type="Text"
             class="inputTypeOption text-opacity-60 justify-content display-flex align-items-center">
@@ -104,15 +131,27 @@
           </div>
 
           <div data-input-type="URL"
-            class="inputTypeOption text-opacity-60 justify-content display-flex align-items-center">
+            class="inputTypeOption pro-feature text-opacity-60 justify-content display-flex align-items-center radius-l"
+            data-pro="true">
             <i data-lucide="link"></i>
             <span data-i18n="InputTypeURL" class="margin-left-xs">URLs</span>
+
+            <span class="pro-badge margin-left-xs">
+              <i data-lucide="lock" class="pro-lock"></i>
+              <span>PRO</span>
+            </span>
           </div>
 
           <div data-input-type="File"
-            class="inputTypeOption text-opacity-60 justify-content display-flex align-items-center">
+            class="inputTypeOption pro-feature text-opacity-60 justify-content display-flex align-items-center radius-l"
+            data-pro="true">
             <i data-lucide="file-text"></i>
             <span data-i18n="InputTypeFile" class="margin-left-xs">Files</span>
+
+            <span class="pro-badge margin-left-xs">
+              <i data-lucide="lock" class="pro-lock"></i>
+              <span>PRO</span>
+            </span>
           </div>
         </div>
 
@@ -120,9 +159,7 @@
           <!-- TEXT -->
           <div id="textInputWrapper" class="input-mode-wrapper">
             <div class="relative">
-              <textarea
-                id="inputText"
-                data-i18n-placeholder="placeholder"
+              <textarea id="inputText" data-i18n-placeholder="placeholder"
                 placeholder="Paste the text here..."></textarea>
 
               <button id="btnMic" type="button" class="mic-ondiv" aria-label="Voice input">
@@ -135,11 +172,7 @@
 
           <!-- URL -->
           <div id="urlInputWrapper" class="input-mode-wrapper hidden">
-            <input
-              id="inputUrl"
-              type="url"
-              class="custom-input"
-              data-i18n-placeholder="urlPlaceholder"
+            <input id="inputUrl" type="url" class="custom-input" data-i18n-placeholder="urlPlaceholder"
               placeholder="https://example.com/article" />
           </div>
 
@@ -192,10 +225,17 @@
               </div>
             </div>
 
-            <div data-summary-size="size-long" class="summary-size-card">
+            <div data-summary-size="size-long" class="summary-size-card pro-feature" data-pro="true">
+              <div class="card-corner-lock">
+                <i data-lucide="lock"></i>
+              </div>
+
               <i data-lucide="file-text"></i>
 
-              <div data-i18n="long">long</div>
+              <div class="display-flex align-center justify-content-center gap8">
+                <div data-i18n="long">long</div>
+                <span class="pro-badge small-badge">PRO</span>
+              </div>
 
               <div data-i18n="longDesc" class="font-light text-opacity-50">
                 detailed summary
@@ -224,9 +264,17 @@
               <div data-i18n="bulletPoints">bullet points</div>
             </div>
 
-            <div data-summary-type="type-academic" class="summary-type-card">
+            <div data-summary-type="type-academic" class="summary-type-card pro-feature" data-pro="true">
+              <div class="card-corner-lock">
+                <i data-lucide="lock"></i>
+              </div>
+
               <i data-lucide="graduation-cap"></i>
-              <div data-i18n="academic">academic</div>
+
+              <div class="display-flex align-center justify-content-center gap8">
+                <div data-i18n="academic">academic</div>
+                <span class="pro-badge small-badge">PRO</span>
+              </div>
             </div>
           </div>
 
@@ -243,11 +291,7 @@
           <h2 data-i18n="result">Result</h2>
 
           <div class="output-container">
-            <div
-              id="copyIconWrapper"
-              class="output-copy-button pointer"
-              type="button"
-              aria-label="Copy summary">
+            <div id="copyIconWrapper" class="output-copy-button pointer" type="button" aria-label="Copy summary">
               <i data-lucide="clipboard"></i>
             </div>
 
@@ -271,8 +315,62 @@
     </aside>
   </div>
 
-  <script src="./translations.js"></script>
-  <script src="./app.js"></script>
+  <!-- UPGRADE MODAL -->
+  <div id="upgradeModal" class="upgrade-modal hidden">
+    <div id="upgradeModalOverlay" class="upgrade-modal-overlay"></div>
+
+    <div class="upgrade-modal-content">
+      <button id="closeUpgradeModal" class="upgrade-modal-close" type="button" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+
+      <div class="upgrade-modal-icon">
+        <i data-lucide="sparkles"></i>
+      </div>
+
+      <h3 id="upgradeModalTitle" data-i18n="upgradeTitle">Upgrade to Pro</h3>
+
+      <p id="upgradeModalText" data-i18n="proFeature">
+        This feature is available on Pro.
+      </p>
+
+      <div class="upgrade-modal-features">
+        <div class="upgrade-feature-item">
+          <i data-lucide="check"></i>
+          <span data-i18n="proFeatureUrl">URL summaries</span>
+        </div>
+
+        <div class="upgrade-feature-item">
+          <i data-lucide="check"></i>
+          <span data-i18n="proFeatureFiles">File summaries</span>
+        </div>
+
+        <div class="upgrade-feature-item">
+          <i data-lucide="check"></i>
+          <span data-i18n="proFeatureAcademic">Academic tone</span>
+        </div>
+
+        <div class="upgrade-feature-item">
+          <i data-lucide="check"></i>
+          <span data-i18n="proFeatureLong">Long summaries</span>
+        </div>
+      </div>
+
+      <div class="upgrade-modal-actions">
+        <button id="cancelUpgradeBtn" class="upgrade-btn-secondary" type="button" data-i18n="maybeLater">
+          Maybe later
+        </button>
+
+        <button id="confirmUpgradeBtn" class="upgrade-btn-primary" type="button" data-i18n="upgradeNow">
+          Upgrade now
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script src="./translations.js"></script>
+<script src="./common.js"></script>
+<script type="module" src="./app.js"></script>
 </body>
 
 </html>

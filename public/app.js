@@ -1,3 +1,6 @@
+import { getCurrentUser } from "./auth.js";
+import { initAuthUI } from "./auth-ui.js";
+
 lucide.createIcons();
 
 /* =========================
@@ -13,10 +16,6 @@ const btnMic = document.getElementById("btnMic");
 const copyIconWrapper = document.getElementById("copyIconWrapper");
 const inputTypeTabs = document.querySelectorAll(".inputTypeOption");
 const sizeCards = document.querySelectorAll(".summary-size-card");
-const languageToggle = document.getElementById("languageToggle");
-const languageMenu = document.getElementById("languageMenu");
-const languageOptions = document.querySelectorAll(".language-option");
-const languageDropdown = document.querySelector(".language-dropdown");
 const textInputWrapper = document.getElementById("textInputWrapper");
 const urlInputWrapper = document.getElementById("urlInputWrapper");
 const fileInputWrapper = document.getElementById("fileInputWrapper");
@@ -25,6 +24,15 @@ const fileDropzone = document.getElementById("fileDropzone");
 const inputFile = document.getElementById("inputFile");
 const selectedFileName = document.getElementById("selectedFileName");
 const typeCards = document.querySelectorAll(".summary-type-card");
+
+/* Modal Pro */
+const upgradeModal = document.getElementById("upgradeModal");
+const upgradeModalOverlay = document.getElementById("upgradeModalOverlay");
+const closeUpgradeModalBtn = document.getElementById("closeUpgradeModal");
+const cancelUpgradeBtn = document.getElementById("cancelUpgradeBtn");
+const confirmUpgradeBtn = document.getElementById("confirmUpgradeBtn");
+const upgradeModalTitle = document.getElementById("upgradeModalTitle");
+const upgradeModalText = document.getElementById("upgradeModalText");
 
 /* =========================
    ESTADO
@@ -36,57 +44,85 @@ let recognition = null;
 let isListening = false;
 let recognitionBaseText = "";
 
+/*
+  TEMPORÁRIO:
+  enquanto ainda não tiveres auth/plano real vindo da BD,
+  podes testar com "free" ou "pro"
+*/
+let currentUserPlan = "free";
+
 /* =========================
-   IDIOMA
+   HELPERS PRO
 ========================= */
-function getDefaultBrowserLanguage() {
-  const browserLang = navigator.language || "en-US";
-
-  if (browserLang.startsWith("pt")) return "pt-PT";
-  if (browserLang.startsWith("en")) return "en-US";
-  if (browserLang.startsWith("id")) return "id-ID";
-  if (browserLang.startsWith("zh")) return "zh-CN";
-
-  return "en-US";
+function isProUser() {
+  return currentUserPlan === "pro";
 }
 
-function getCurrentLanguage() {
-  return localStorage.getItem("nuxsum_lang") || getDefaultBrowserLanguage();
+function isProLocked(element) {
+  return element?.dataset?.pro === "true" && !isProUser();
 }
 
-function t(key) {
-  const lang = getCurrentLanguage();
-  return translations?.[lang]?.[key] || translations?.["en-US"]?.[key] || key;
-}
-
-function applyLanguage(lang) {
-  const tObj = translations?.[lang];
-  if (!tObj) return;
-
-  document.documentElement.lang = lang;
-
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    const key = element.dataset.i18n;
-    if (tObj[key]) {
-      element.textContent = tObj[key];
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-    const key = element.dataset.i18nPlaceholder;
-    if (tObj[key]) {
-      element.placeholder = tObj[key];
-    }
-  });
-
-  if (recognition) {
-    recognition.lang = lang;
+function openUpgradeModal(featureKey = "proFeature") {
+  if (!upgradeModal) {
+    showToast(t(featureKey));
+    return;
   }
+
+  if (upgradeModalTitle) {
+    upgradeModalTitle.textContent = t("upgradeTitle");
+  }
+
+  if (upgradeModalText) {
+    upgradeModalText.textContent = t(featureKey);
+  }
+
+  upgradeModal.classList.remove("hidden");
+  document.body.classList.add("modal-open");
 }
 
-function setLanguage(lang) {
-  localStorage.setItem("nuxsum_lang", lang);
-  applyLanguage(lang);
+function closeUpgradeModal() {
+  if (!upgradeModal) return;
+
+  upgradeModal.classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
+
+function initUpgradeModal() {
+  if (!upgradeModal) return;
+
+  closeUpgradeModalBtn?.addEventListener("click", closeUpgradeModal);
+  cancelUpgradeBtn?.addEventListener("click", closeUpgradeModal);
+  upgradeModalOverlay?.addEventListener("click", closeUpgradeModal);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !upgradeModal.classList.contains("hidden")) {
+      closeUpgradeModal();
+    }
+  });
+
+  confirmUpgradeBtn?.addEventListener("click", () => {
+    closeUpgradeModal();
+
+    setTimeout(() => {
+      window.location.href = "./pricing.html";
+    }, 120);
+  });
+}
+
+function getProMessageKeyByInputType(inputType) {
+  if (inputType === "URL") return "proUrlFeature";
+  if (inputType === "File") return "proFileFeature";
+  return "proFeature";
+}
+
+function getProMessageKeyBySize(size) {
+  if (size === "size-long") return "proLongFeature";
+  return "proFeature";
+}
+
+function getProMessageKeyByType(type) {
+  if (type === "type-academic") return "proAcademicFeature";
+  return "proFeature";
 }
 
 /* =========================
@@ -116,6 +152,11 @@ function initSummaryTypeCards() {
     }
 
     card.addEventListener("click", () => {
+      if (isProLocked(card)) {
+        openUpgradeModal(getProMessageKeyByType(card.dataset.summaryType));
+        return;
+      }
+
       typeCards.forEach((item) => item.classList.remove("selected"));
       card.classList.add("selected");
       selectedType = card.dataset.summaryType || "type-formal";
@@ -136,6 +177,11 @@ function initSummarySizeCards() {
     }
 
     card.addEventListener("click", () => {
+      if (isProLocked(card)) {
+        openUpgradeModal(getProMessageKeyBySize(card.dataset.summarySize));
+        return;
+      }
+
       sizeCards.forEach((item) => item.classList.remove("selected"));
       card.classList.add("selected");
       selectedSize = card.dataset.summarySize || "size-medium";
@@ -174,6 +220,11 @@ function initSummaryInputTypeTabs() {
     }
 
     tab.addEventListener("click", () => {
+      if (isProLocked(tab)) {
+        openUpgradeModal(getProMessageKeyByInputType(tab.dataset.inputType));
+        return;
+      }
+
       inputTypeTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
       selectedInputType = tab.dataset.inputType || "Text";
@@ -240,33 +291,6 @@ function initCopyButton() {
 }
 
 /* =========================
-   DROPDOWN DE IDIOMA
-========================= */
-function initLanguageDropdown() {
-  if (!languageToggle || !languageMenu || !languageDropdown) return;
-
-  languageToggle.addEventListener("click", () => {
-    languageMenu.classList.toggle("hidden");
-  });
-
-  document.addEventListener("click", (event) => {
-    if (!languageDropdown.contains(event.target)) {
-      languageMenu.classList.add("hidden");
-    }
-  });
-
-  languageOptions.forEach((option) => {
-    option.addEventListener("click", () => {
-      const lang = option.dataset.lang;
-      if (!lang) return;
-
-      setLanguage(lang);
-      languageMenu.classList.add("hidden");
-    });
-  });
-}
-
-/* =========================
    MICROFONE
 ========================= */
 function initSpeechRecognition() {
@@ -311,8 +335,7 @@ function initSpeechRecognition() {
   });
 
   recognition.addEventListener("result", (event) => {
-    const transcript =
-      event.results[event.results.length - 1][0].transcript.trim();
+    const transcript = event.results[event.results.length - 1][0].transcript.trim();
 
     if (!transcript) return;
 
@@ -365,6 +388,27 @@ function setSummarizeLoadingState(isLoading, loadingTextKey = "waitingSummary") 
 }
 
 /* =========================
+   USER PLAN
+========================= */
+async function updateCurrentUserPlan() {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      currentUserPlan = "free";
+      return;
+    }
+
+    // TEMPORÁRIO:
+    // quando ligares a BD a sério, troca isto por fetch à tua tabela users
+    currentUserPlan = "free";
+  } catch (error) {
+    console.error("Failed to get user plan:", error);
+    currentUserPlan = "free";
+  }
+}
+
+/* =========================
    SUMMARIZE TEXT
 ========================= */
 async function summarizeText() {
@@ -385,10 +429,13 @@ async function summarizeText() {
   const timeoutId = setTimeout(() => controller.abort(), 20000);
 
   try {
+    const user = await getCurrentUser();
+
     const res = await fetch("/api/summarize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        userId: user?.id || null,
         text,
         size,
         type,
@@ -438,12 +485,15 @@ async function summarizeFromUrl(url, size, type) {
   const timeoutId = setTimeout(() => controller.abort(), 20000);
 
   try {
+    const user = await getCurrentUser();
+
     const response = await fetch("/api/extract", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        userId: user?.id || null,
         url,
         size,
         type,
@@ -537,7 +587,7 @@ function initSummarizeButton() {
 }
 
 /* =========================
-   UPLOAD FILES
+   FILE UPLOAD
 ========================= */
 function updateSelectedFileUI(file) {
   if (!selectedFileName || !inputFile) return;
@@ -593,15 +643,11 @@ function initFileUpload() {
 /* =========================
    INIT
 ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  let savedLang = localStorage.getItem("nuxsum_lang");
-
-  if (!savedLang) {
-    savedLang = getDefaultBrowserLanguage();
-    localStorage.setItem("nuxsum_lang", savedLang);
-  }
-
-  applyLanguage(savedLang);
+document.addEventListener("DOMContentLoaded", async () => {
+  initCommonPage();
+  initAuthUI();
+  await updateCurrentUserPlan();
+  initUpgradeModal();
   initSummarizeButton();
   initFileUpload();
   initSummaryTypeCards();
@@ -609,8 +655,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initSummaryInputTypeTabs();
   initCharCounter();
   initCopyButton();
-  initLanguageDropdown();
   initSpeechRecognition();
-
-  lucide.createIcons();
 });

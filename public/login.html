@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nuxsum | Login</title>
+  <link rel="stylesheet" href="./index.css" />
+  <link rel="icon" href="./favicon.png">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="app-shell">
+      <main class="padding-l">
+        <section class="margin-bottom-l">
+          <h1 class="font-bold text-xl">Entrar ou criar conta</h1>
+          <p class="text-opacity-50">Usa a tua conta para guardar o plano e desbloquear funcionalidades Pro.</p>
+        </section>
+
+        <section class="auth-card">
+          <div class="margin-bottom-m">
+            <label for="authEmail">Email</label>
+            <input id="authEmail" type="email" class="custom-input" placeholder="email@exemplo.com" />
+          </div>
+
+          <div class="margin-bottom-l">
+            <label for="authPassword">Password</label>
+            <input id="authPassword" type="password" class="custom-input" placeholder="••••••••" />
+          </div>
+
+          <div class="display-flex gap8 margin-bottom-m">
+            <button id="loginBtn" class="resume-button" type="button">Entrar</button>
+            <button id="signupBtn" class="resume-button" type="button">Criar conta</button>
+          </div>
+
+          <div id="authMessage" class="text-opacity-50"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+<script src="./translations.js"></script>
+<script src="./common.js"></script>
+<script type="module" src="./login.js"></script>
+</body>
+</html>
