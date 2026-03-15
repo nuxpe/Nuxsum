@@ -1,4 +1,5 @@
-lucide.createIcons()
+lucide.createIcons();
+
 /* =========================
    ELEMENTOS DOM
 ========================= */
@@ -23,15 +24,16 @@ const inputUrl = document.getElementById("inputUrl");
 const fileDropzone = document.getElementById("fileDropzone");
 const inputFile = document.getElementById("inputFile");
 const selectedFileName = document.getElementById("selectedFileName");
+const typeCards = document.querySelectorAll(".summary-type-card");
 
 /* =========================
    ESTADO
 ========================= */
 let selectedSize = "size-medium";
+let selectedType = "type-formal";
 let selectedInputType = "Text";
 let recognition = null;
 let isListening = false;
-let finalTranscript = "";
 let recognitionBaseText = "";
 
 /* =========================
@@ -102,18 +104,41 @@ function showToast(text) {
 }
 
 /* =========================
+   SUMMARY TYPE
+========================= */
+function initSummaryTypeCards() {
+  if (!typeCards.length) return;
+
+  typeCards.forEach((card) => {
+    if (card.dataset.summaryType === "type-formal") {
+      card.classList.add("selected");
+      selectedType = "type-formal";
+    }
+
+    card.addEventListener("click", () => {
+      typeCards.forEach((item) => item.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedType = card.dataset.summaryType || "type-formal";
+    });
+  });
+}
+
+/* =========================
    SUMMARY SIZE
 ========================= */
 function initSummarySizeCards() {
+  if (!sizeCards.length) return;
+
   sizeCards.forEach((card) => {
-    if (card.dataset.size === "size-medium") {
+    if (card.dataset.summarySize === "size-medium") {
       card.classList.add("selected");
+      selectedSize = "size-medium";
     }
 
     card.addEventListener("click", () => {
       sizeCards.forEach((item) => item.classList.remove("selected"));
       card.classList.add("selected");
-      selectedSize = card.dataset.size;
+      selectedSize = card.dataset.summarySize || "size-medium";
     });
   });
 }
@@ -122,6 +147,8 @@ function initSummarySizeCards() {
    SUMMARY INPUT TABS
 ========================= */
 function updateInputTypeUI() {
+  if (!textInputWrapper || !urlInputWrapper || !fileInputWrapper || !output) return;
+
   textInputWrapper.classList.add("hidden");
   urlInputWrapper.classList.add("hidden");
   fileInputWrapper.classList.add("hidden");
@@ -138,6 +165,8 @@ function updateInputTypeUI() {
 }
 
 function initSummaryInputTypeTabs() {
+  if (!inputTypeTabs.length) return;
+
   inputTypeTabs.forEach((tab) => {
     if (tab.dataset.inputType === "Text") {
       tab.classList.add("active");
@@ -147,11 +176,8 @@ function initSummaryInputTypeTabs() {
     tab.addEventListener("click", () => {
       inputTypeTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
-      selectedInputType = tab.dataset.inputType;
-
+      selectedInputType = tab.dataset.inputType || "Text";
       updateInputTypeUI();
-
-      console.log("selectedInputType:", selectedInputType);
     });
   });
 
@@ -244,7 +270,8 @@ function initLanguageDropdown() {
    MICROFONE
 ========================= */
 function initSpeechRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition || !btnMic || !inputText) {
     console.log("Speech recognition not supported in this browser.");
@@ -265,7 +292,6 @@ function initSpeechRecognition() {
 
     if (!isListening) {
       recognitionBaseText = inputText.value.trim();
-      finalTranscript = "";
       recognition.lang = getCurrentLanguage();
 
       try {
@@ -285,7 +311,8 @@ function initSpeechRecognition() {
   });
 
   recognition.addEventListener("result", (event) => {
-    const transcript = event.results[event.results.length - 1][0].transcript.trim();
+    const transcript =
+      event.results[event.results.length - 1][0].transcript.trim();
 
     if (!transcript) return;
 
@@ -327,20 +354,31 @@ function initSpeechRecognition() {
 }
 
 /* =========================
+   ESTADO DO BOTÃO
+========================= */
+function setSummarizeLoadingState(isLoading, loadingTextKey = "waitingSummary") {
+  if (!btnSummarize || !buttonSummarizeText) return;
+
+  btnSummarize.disabled = isLoading;
+  btnSummarize.classList.toggle("disabled-btn", isLoading);
+  buttonSummarizeText.textContent = isLoading ? t(loadingTextKey) : t("summarize");
+}
+
+/* =========================
    SUMMARIZE TEXT
 ========================= */
 async function summarizeText() {
   const text = inputText?.value.trim();
   const size = selectedSize;
+  const type = selectedType;
+  const lang = getCurrentLanguage();
 
   if (!text) {
     output.textContent = t("emptyInput");
     return;
   }
 
-  btnSummarize.disabled = true;
-  btnSummarize.classList.add("disabled-btn");
-  buttonSummarizeText.textContent = t("waitingSummary");
+  setSummarizeLoadingState(true);
   output.textContent = t("writingSummary");
 
   const controller = new AbortController();
@@ -353,7 +391,8 @@ async function summarizeText() {
       body: JSON.stringify({
         text,
         size,
-        lang: getCurrentLanguage()
+        type,
+        lang
       }),
       signal: controller.signal
     });
@@ -387,16 +426,14 @@ async function summarizeText() {
       output.textContent = t("serverError");
     }
   } finally {
-    btnSummarize.disabled = false;
-    btnSummarize.classList.remove("disabled-btn");
-    buttonSummarizeText.textContent = t("summarize");
+    setSummarizeLoadingState(false);
   }
 }
 
 /* =========================
    SUMMARIZE URL
 ========================= */
-async function summarizeFromUrl(url, size) {
+async function summarizeFromUrl(url, size, type) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
 
@@ -409,6 +446,7 @@ async function summarizeFromUrl(url, size) {
       body: JSON.stringify({
         url,
         size,
+        type,
         lang: getCurrentLanguage()
       }),
       signal: controller.signal
@@ -428,7 +466,7 @@ async function summarizeFromUrl(url, size) {
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "Error summarizing URL");
+      throw new Error(data.error || t("serverError"));
     }
 
     return data;
@@ -436,7 +474,7 @@ async function summarizeFromUrl(url, size) {
     clearTimeout(timeoutId);
 
     if (error.name === "AbortError") {
-      throw new Error("Request timed out");
+      throw new Error(t("requestTimeout"));
     }
 
     throw error;
@@ -463,25 +501,21 @@ async function handleSummarizeClick() {
     const url = inputUrl.value.trim();
 
     if (!url) {
-      output.textContent = "Insere uma URL primeiro.";
+      output.textContent = t("urlEmpty");
       return;
     }
 
-    btnSummarize.disabled = true;
-    btnSummarize.classList.add("disabled-btn");
-    buttonSummarizeText.textContent = t("waitingSummary");
-    output.textContent = "A processar URL...";
+    setSummarizeLoadingState(true);
+    output.textContent = t("urlProcessing");
 
     try {
-      const data = await summarizeFromUrl(url, selectedSize);
+      const data = await summarizeFromUrl(url, selectedSize, selectedType);
       output.textContent = data.summary || t("emptySummary");
     } catch (error) {
       console.error("URL summarize error:", error);
       output.textContent = error.message || t("serverError");
     } finally {
-      btnSummarize.disabled = false;
-      btnSummarize.classList.remove("disabled-btn");
-      buttonSummarizeText.textContent = t("summarize");
+      setSummarizeLoadingState(false);
     }
 
     return;
@@ -489,12 +523,11 @@ async function handleSummarizeClick() {
 
   if (selectedInputType === "File") {
     if (!inputFile || !inputFile.files || !inputFile.files[0]) {
-      output.textContent = "Escolhe um ficheiro primeiro.";
+      output.textContent = t("fileEmpty");
       return;
     }
 
-    output.textContent = "Upload de ficheiros ainda não está implementado.";
-    return;
+    output.textContent = t("fileNotImplemented");
   }
 }
 
@@ -502,11 +535,12 @@ function initSummarizeButton() {
   if (!btnSummarize) return;
   btnSummarize.addEventListener("click", handleSummarizeClick);
 }
+
 /* =========================
    UPLOAD FILES
 ========================= */
 function updateSelectedFileUI(file) {
-  if (!selectedFileName) return;
+  if (!selectedFileName || !inputFile) return;
 
   if (!file) {
     selectedFileName.textContent = "";
@@ -517,13 +551,13 @@ function updateSelectedFileUI(file) {
   const maxSize = 10 * 1024 * 1024;
 
   if (file.size > maxSize) {
-    selectedFileName.textContent = "File is too large. Max size is 20MB.";
+    selectedFileName.textContent = t("fileTooLarge");
     selectedFileName.classList.remove("hidden");
     inputFile.value = "";
     return;
   }
 
-  selectedFileName.textContent = `Selected file: ${file.name}`;
+  selectedFileName.textContent = `${t("selectedFile")} ${file.name}`;
   selectedFileName.classList.remove("hidden");
 }
 
@@ -556,7 +590,6 @@ function initFileUpload() {
   });
 }
 
-
 /* =========================
    INIT
 ========================= */
@@ -570,7 +603,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyLanguage(savedLang);
   initSummarizeButton();
-  initFileUpload()
+  initFileUpload();
+  initSummaryTypeCards();
   initSummarySizeCards();
   initSummaryInputTypeTabs();
   initCharCounter();
@@ -580,4 +614,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   lucide.createIcons();
 });
-

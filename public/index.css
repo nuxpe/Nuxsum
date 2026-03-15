@@ -413,6 +413,32 @@ button:hover {
   background-color: #3b83f63b;
 }
 
+@media (max-width: 640px) {
+  .summary-type-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.summary-type-card{
+  border-radius: var(--radius-m);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+  cursor: pointer;
+  background-color: var(--color-washed-blue);
+  padding: var(--space-base);
+  transition: 0.2s;
+  padding: var(--space-base);
+}
+
+.summary-type-card.selected{
+  border-color: var(--color-primary);
+  box-shadow: 0 0 50px rgba(37,99,235,0.4);
+  background-color: #3b83f63b;
+}
+
 .app-header{
   border-bottom: 1px solid var(--color-border);
 }

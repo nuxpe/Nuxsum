@@ -1,23 +1,28 @@
 <!doctype html>
-<html lang="pt">
+<html lang="pt-PT">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Summarize any text instantly with Nuxsum. Paste text and get a clean summary in seconds.">
+  <meta name="description"
+    content="Summarize any text instantly with Nuxsum. Paste text and get a clean summary in seconds.">
   <meta name="robots" content="index, follow">
   <meta name="keywords" content="text summarizer, AI summarizer, summarize text online, article summarizer">
   <title>Nuxsum | AI Text Summarizer</title>
+
   <meta property="og:title" content="Nuxsum - Summarize Text Instantly with AI">
   <meta property="og:description" content="Paste any long text and get a clean AI-powered summary in seconds.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://nuxsum.vercel.app">
   <meta property="og:image" content="https://nuxsum.vercel.app/assets/og-image.png">
+
   <link rel="canonical" href="https://nuxsum.vercel.app">
   <link rel="stylesheet" href="index.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6685941846897811"
     crossorigin="anonymous"></script>
+
   <link rel="icon" href="./favicon.png">
 </head>
 
@@ -33,20 +38,17 @@
       <header class="app-header padding-base margin-bottom-l">
         <div class="header-inner">
           <div class="display-flex align-center">
-
             <div class="display-flex align-center gap8">
               <img src="./assets/logo.png" class="logo-icon" alt="Nuxsum logo">
               <span class="font-bold">Nuxsum</span>
             </div>
 
             <div class="language-dropdown">
-
-              <button id="languageToggle" class="language-toggle" type="button">
+              <button id="languageToggle" class="language-toggle" type="button" aria-label="Change language">
                 <i data-lucide="languages" class="flag-icon"></i>
               </button>
 
               <div id="languageMenu" class="language-menu hidden">
-
                 <button class="language-option" data-lang="en-US" type="button">
                   <span class="flag-emoji">EN</span>
                   <img src="./assets/flag-usa.svg" alt="English" class="flag-icon">
@@ -66,23 +68,20 @@
                   <span class="flag-emoji">CN</span>
                   <img src="./assets/flag-china.svg" alt="中文" class="flag-icon">
                 </button>
-
               </div>
-
             </div>
-
           </div>
         </div>
       </header>
 
       <main class="padding-l">
-
         <!-- HERO -->
         <section class="margin-bottom-l">
           <div class="tight-line margin-bottom-l">
             <span data-i18n="title1" class="text-xl font-bold">
-              Sumarize any text
-            </span><br>
+              Summarize any text
+            </span>
+            <br>
 
             <span data-i18n="title2" class="text-xl font-bold text-primary hero-title">
               into its essence.
@@ -94,6 +93,7 @@
           </label>
         </section>
 
+        <!-- INPUT TYPE -->
         <div id="SummaryInputTypeGroup"
           class="bg-washed-blue radius-l border-1 border-border padding-m text-center display-flex gap8 margin-bottom-l">
 
@@ -114,18 +114,18 @@
             <i data-lucide="file-text"></i>
             <span data-i18n="InputTypeFile" class="margin-left-xs">Files</span>
           </div>
-
         </div>
 
         <section class="margin-bottom-l">
-
           <!-- TEXT -->
           <div id="textInputWrapper" class="input-mode-wrapper">
             <div class="relative">
-              <textarea id="inputText" data-i18n-placeholder="placeholder"
+              <textarea
+                id="inputText"
+                data-i18n-placeholder="placeholder"
                 placeholder="Paste the text here..."></textarea>
 
-              <button id="btnMic" type="button" class="mic-ondiv">
+              <button id="btnMic" type="button" class="mic-ondiv" aria-label="Voice input">
                 <i data-lucide="mic"></i>
               </button>
             </div>
@@ -135,20 +135,26 @@
 
           <!-- URL -->
           <div id="urlInputWrapper" class="input-mode-wrapper hidden">
-            <input id="inputUrl" type="url" placeholder="https://example.com/article" class="custom-input" />
+            <input
+              id="inputUrl"
+              type="url"
+              class="custom-input"
+              data-i18n-placeholder="urlPlaceholder"
+              placeholder="https://example.com/article" />
           </div>
 
+          <!-- FILE -->
           <div id="fileInputWrapper" class="input-mode-wrapper hidden">
             <label for="inputFile" id="fileDropzone" class="file-dropzone">
               <div class="file-dropzone-icon">
                 <i data-lucide="upload"></i>
               </div>
 
-              <div class="file-dropzone-title">
+              <div data-i18n="dropzoneTitle" class="file-dropzone-title">
                 Drop files here or click to browse
               </div>
 
-              <div id="fileDropzoneSubtitle" class="file-dropzone-subtitle">
+              <div id="fileDropzoneSubtitle" data-i18n="dropzoneSubtitle" class="file-dropzone-subtitle">
                 PDF, TXT — up to 10MB
               </div>
 
@@ -157,20 +163,16 @@
 
             <div id="selectedFileName" class="selected-file-name hidden"></div>
           </div>
-
         </section>
-
 
         <!-- SUMMARY LENGTH -->
         <section class="margin-bottom-l">
-
           <div data-i18n="summaryLength" class="margin-bottom-m text-opacity-50">
             SUMMARY LENGTH
           </div>
 
           <div id="summary-size-group" class="display-flex gap16 summary-size-container">
-
-            <div data-size="size-short" class="summary-size-card">
+            <div data-summary-size="size-short" class="summary-size-card">
               <i data-lucide="zap"></i>
 
               <div data-i18n="short">short</div>
@@ -180,7 +182,7 @@
               </div>
             </div>
 
-            <div data-size="size-medium" class="summary-size-card">
+            <div data-summary-size="size-medium" class="summary-size-card">
               <i data-lucide="align-left"></i>
 
               <div data-i18n="medium">medium</div>
@@ -190,7 +192,7 @@
               </div>
             </div>
 
-            <div data-size="size-long" class="summary-size-card">
+            <div data-summary-size="size-long" class="summary-size-card">
               <i data-lucide="file-text"></i>
 
               <div data-i18n="long">long</div>
@@ -199,58 +201,78 @@
                 detailed summary
               </div>
             </div>
+          </div>
 
+          <!-- SUMMARY TYPE -->
+          <div data-i18n="summaryType" class="margin-bottom-m text-opacity-50 margin-top-l">
+            TONE & STYLE
+          </div>
+
+          <div id="SummaryTypeGroup" class="display-flex gap8 summary-type-container">
+            <div data-summary-type="type-formal" class="summary-type-card">
+              <i data-lucide="briefcase-business"></i>
+              <div data-i18n="formal">formal</div>
+            </div>
+
+            <div data-summary-type="type-casual" class="summary-type-card">
+              <i data-lucide="message-circle"></i>
+              <div data-i18n="casual">casual</div>
+            </div>
+
+            <div data-summary-type="type-bullets" class="summary-type-card">
+              <i data-lucide="message-square-text"></i>
+              <div data-i18n="bulletPoints">bullet points</div>
+            </div>
+
+            <div data-summary-type="type-academic" class="summary-type-card">
+              <i data-lucide="graduation-cap"></i>
+              <div data-i18n="academic">academic</div>
+            </div>
           </div>
 
           <div class="text-center margin-top-l">
-            <button id="btnSummarize" class="resume-button">
+            <button id="btnSummarize" class="resume-button" type="button">
               <span id="btnSummarizeText" data-i18n="summarize">Summarize</span>
               <span class="margin-left-m" data-lucide="arrow-right"></span>
             </button>
           </div>
-
         </section>
 
         <!-- RESULT -->
         <section>
-
-          <h2 data-i18n="result">
-            Result
-          </h2>
+          <h2 data-i18n="result">Result</h2>
 
           <div class="output-container">
-            <div id="copyIconWrapper" class="output-copy-button pointer" type="button" aria-label="Copy summary">
+            <div
+              id="copyIconWrapper"
+              class="output-copy-button pointer"
+              type="button"
+              aria-label="Copy summary">
               <i data-lucide="clipboard"></i>
             </div>
 
             <div id="output" class="output-text"></div>
           </div>
-
         </section>
-
-
       </main>
 
       <footer class="footer">
         <div class="footer-inner">
-          <a href="./about.html">About</a>
-          <a href="./privacy-policy.html">Privacy</a>
-          <a href="./terms.html">Terms</a>
-          <a href="./contact.html">Contact</a>
+          <a href="./about.html" data-i18n="footerAbout">About</a>
+          <a href="./privacy-policy.html" data-i18n="footerPrivacy">Privacy</a>
+          <a href="./terms.html" data-i18n="footerTerms">Terms</a>
+          <a href="./contact.html" data-i18n="footerContact">Contact</a>
         </div>
       </footer>
-
     </div>
 
     <aside class="ad-sidebar ad-sidebar-right">
       <div class="ad-box"></div>
     </aside>
-
   </div>
 
   <script src="./translations.js"></script>
   <script src="./app.js"></script>
-
 </body>
 
 </html>
