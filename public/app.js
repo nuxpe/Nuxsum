@@ -1,4 +1,4 @@
-import { getCurrentUser } from "./auth.js";
+import { supabase, getCurrentUser } from "./auth.js";
 import { initAuthUI } from "./auth-ui.js";
 
 lucide.createIcons();
@@ -37,6 +37,8 @@ const upgradeModalText = document.getElementById("upgradeModalText");
 /* =========================
    ESTADO
 ========================= */
+let currentUserPlan = "free";
+let currentCharLimit = 5000;
 let selectedSize = "size-medium";
 let selectedType = "type-formal";
 let selectedInputType = "Text";
@@ -44,12 +46,6 @@ let recognition = null;
 let isListening = false;
 let recognitionBaseText = "";
 
-/*
-  TEMPORÁRIO:
-  enquanto ainda não tiveres auth/plano real vindo da BD,
-  podes testar com "free" ou "pro"
-*/
-let currentUserPlan = "free";
 
 /* =========================
    HELPERS PRO
@@ -242,11 +238,11 @@ function updateCharCounter() {
   if (!inputText || !charCounter) return;
 
   const count = inputText.value.length;
-  charCounter.textContent = `${count} / 12000`;
+  charCounter.textContent = `${count} / ${currentCharLimit}`;
 
-  if (count >= 12000) {
+  if (count >= currentCharLimit) {
     charCounter.style.color = "red";
-  } else if (count > 10000) {
+  } else if (count > currentCharLimit * 0.85) {
     charCounter.style.color = "orange";
   } else {
     charCounter.style.color = "white";
@@ -396,15 +392,29 @@ async function updateCurrentUserPlan() {
 
     if (!user) {
       currentUserPlan = "free";
+      currentCharLimit = 5000;
       return;
     }
 
-    // TEMPORÁRIO:
-    // quando ligares a BD a sério, troca isto por fetch à tua tabela users
-    currentUserPlan = "free";
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching profile:", error);
+      currentUserPlan = "free";
+      currentCharLimit = 5000;
+      return;
+    }
+
+    currentUserPlan = data?.plan || "free";
+    currentCharLimit = currentUserPlan === "pro" ? 20000 : 5000;
   } catch (error) {
     console.error("Failed to get user plan:", error);
     currentUserPlan = "free";
+    currentCharLimit = 5000;
   }
 }
 
@@ -421,6 +431,14 @@ async function summarizeText() {
     output.textContent = t("emptyInput");
     return;
   }
+
+if (text.length > currentCharLimit) {
+  output.textContent =
+    currentUserPlan === "pro"
+      ? `You can only summarize up to ${currentCharLimit} characters.`
+      : "Free plan limit reached. Upgrade to Pro to unlock 20000 characters.";
+  return;
+}
 
   setSummarizeLoadingState(true);
   output.textContent = t("writingSummary");
