@@ -30,6 +30,23 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "Invalid user" });
     }
 
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("plan, stripe_subscription_id")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Profile fetch error:", profileError);
+      return res.status(500).json({ error: "Failed to load profile" });
+    }
+
+    if (profile?.plan === "pro" || profile?.stripe_subscription_id) {
+      return res.status(400).json({
+        error: "You already have an active Pro subscription."
+      });
+    }
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [
@@ -38,7 +55,7 @@ export default async function handler(req, res) {
           quantity: 1
         }
       ],
-      success_url: `${process.env.PUBLIC_SITE_URL}/pricing-success.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.PUBLIC_SITE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.PUBLIC_SITE_URL}/pricing.html`,
       client_reference_id: user.id,
       customer_email: user.email,
@@ -59,6 +76,8 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Stripe checkout error:", error);
-    return res.status(500).json({ error: "Failed to create checkout session" });
+    return res.status(500).json({
+      error: error.message || "Failed to create checkout session"
+    });
   }
 }

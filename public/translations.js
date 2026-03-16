@@ -100,11 +100,11 @@ const translations = {
 
     pricingFaqTitle: "FAQ",
     pricingFaqQ1: "Can I cancel anytime?",
-    pricingFaqA1: "Yes. Once you connect Stripe, you can allow cancellation at any time.",
+    pricingFaqA1: "Yes. You can manage or cancel your subscription from the billing portal.",
     pricingFaqQ2: "Will the Free plan still exist?",
-    pricingFaqA2: "Yes, the idea is to keep a useful free version so anyone can try it.",
-    pricingFaqQ3: "Is payment already connected?",
-    pricingFaqA3: "Not yet. This page is already visually ready, you just need to connect the button to checkout.",
+    pricingFaqA2: "Yes. The free plan stays available for quick summaries and lighter use.",
+    pricingFaqQ3: "When do Pro features unlock?",
+    pricingFaqA3: "Usually right after payment. In some cases it can take a few seconds while your account updates.",
 
     pricingFooter: "© Nuxsum — Built for faster reading and cleaner summaries.",
     pricingStripePlaceholder: "Connect your Stripe Checkout here",
@@ -118,6 +118,14 @@ const translations = {
     authCheckEmail: "Account created. Check your email to confirm your account.",
     authSignupSuccess: "Account created successfully.",
     authSignupError: "Error while creating account.",
+
+    successTitle: "Payment completed",
+    successText: "Your payment was processed successfully. Your Pro plan is now being activated.",
+    successBackHome: "Back to Nuxsum",
+    successBackPricing: "View pricing",
+
+    pricingManageSubscription: "Manage subscription",
+    pricingMiniNote: "Cancel anytime. No hidden fees."
   },
 
   "pt-PT": {
@@ -221,11 +229,11 @@ const translations = {
 
     pricingFaqTitle: "FAQ",
     pricingFaqQ1: "Posso cancelar quando quiser?",
-    pricingFaqA1: "Sim. Quando ligares o Stripe, podes deixar cancelamento livre a qualquer momento.",
+    pricingFaqA1: "Sim. Podes gerir ou cancelar a subscrição através do portal de faturação.",
     pricingFaqQ2: "O plano Free continua disponível?",
-    pricingFaqA2: "Sim, a ideia é manter uma versão gratuita útil para qualquer pessoa experimentar.",
-    pricingFaqQ3: "Já está ligado ao pagamento?",
-    pricingFaqA3: "Ainda não. Esta página já está pronta visualmente, falta só ligares o botão ao checkout.",
+    pricingFaqA2: "Sim. O plano gratuito continua disponível para resumos rápidos e uso mais leve.",
+    pricingFaqQ3: "Quando é que as funcionalidades Pro ficam ativas?",
+    pricingFaqA3: "Normalmente logo após o pagamento. Em alguns casos pode demorar uns segundos enquanto a conta é atualizada.",
 
     pricingFooter: "© Nuxsum — Built for faster reading and cleaner summaries.",
     pricingStripePlaceholder: "Liga aqui o teu Stripe Checkout.",
@@ -239,6 +247,14 @@ const translations = {
     authCheckEmail: "Conta criada. Verifica o teu email para confirmar a conta.",
     authSignupSuccess: "Conta criada com sucesso.",
     authSignupError: "Erro ao criar conta.",
+
+    successTitle: "Pagamento concluído",
+    successText: "O teu pagamento foi processado com sucesso. O plano Pro está a ser ativado na tua conta.",
+    successBackHome: "Voltar ao Nuxsum",
+    successBackPricing: "Ver pricing",
+
+    pricingManageSubscription: "Gerir subscrição",
+    pricingMiniNote: "Cancela quando quiseres. Sem custos escondidos."
   },
 
   "id-ID": {
@@ -342,11 +358,11 @@ const translations = {
 
     pricingFaqTitle: "FAQ",
     pricingFaqQ1: "Bisakah saya membatalkan kapan saja?",
-    pricingFaqA1: "Ya. Saat Stripe sudah terhubung, Anda bisa mengizinkan pembatalan kapan saja.",
+    pricingFaqA1: "Ya. Anda bisa mengelola atau membatalkan langganan melalui portal penagihan.",
     pricingFaqQ2: "Apakah paket Gratis tetap ada?",
-    pricingFaqA2: "Ya, idenya adalah tetap menyediakan versi gratis yang berguna agar siapa pun bisa mencobanya.",
-    pricingFaqQ3: "Apakah pembayaran sudah terhubung?",
-    pricingFaqA3: "Belum. Halaman ini sudah siap secara visual, Anda hanya perlu menghubungkan tombol ke checkout.",
+    pricingFaqA2: "Ya. Paket gratis tetap tersedia untuk ringkasan cepat dan penggunaan yang lebih ringan.",
+    pricingFaqQ3: "Kapan fitur Pro aktif?",
+    pricingFaqA3: "Biasanya segera setelah pembayaran. Dalam beberapa kasus bisa butuh beberapa detik saat akun Anda diperbarui.",
 
     pricingFooter: "© Nuxsum — Dibuat untuk membaca lebih cepat dan ringkasan yang lebih bersih.",
     pricingStripePlaceholder: "Hubungkan Stripe Checkout Anda di sini.",
@@ -360,6 +376,14 @@ const translations = {
     authCheckEmail: "Akun berhasil dibuat. Periksa email Anda untuk mengonfirmasi akun.",
     authSignupSuccess: "Akun berhasil dibuat.",
     authSignupError: "Terjadi kesalahan saat membuat akun.",
+
+    successTitle: "Pembayaran selesai",
+    successText: "Pembayaran anda berjaya diproses. Pelan Pro anda sedang diaktifkan.",
+    successBackHome: "Kembali ke Nuxsum",
+    successBackPricing: "Lihat harga",
+
+    pricingManageSubscription: "Kelola langganan",
+    pricingMiniNote: "Batalkan kapan saja. Tanpa biaya tersembunyi."
   },
 
   "zh-CN": {
@@ -463,11 +487,11 @@ const translations = {
 
     pricingFaqTitle: "常见问题",
     pricingFaqQ1: "我可以随时取消吗？",
-    pricingFaqA1: "可以。接入 Stripe 后，你可以允许随时取消。",
+    pricingFaqA1: "可以。你可以通过账单门户管理或取消订阅。",
     pricingFaqQ2: "免费版还会保留吗？",
-    pricingFaqA2: "会，目标是保留一个实用的免费版本，让任何人都能试用。",
-    pricingFaqQ3: "现在已经接入支付了吗？",
-    pricingFaqA3: "还没有。这个页面的视觉部分已经准备好了，只差把按钮连接到结账流程。",
+    pricingFaqA2: "会。免费方案会继续保留，适合快速摘要和更轻量的使用。",
+    pricingFaqQ3: "Pro 功能什么时候生效？",
+    pricingFaqA3: "通常在付款后很快生效。有时在账户更新时可能会需要几秒钟。",
 
     pricingFooter: "© Nuxsum — 为更快阅读和更干净的摘要而打造。",
     pricingStripePlaceholder: "在这里接入你的 Stripe Checkout。",
@@ -481,5 +505,12 @@ const translations = {
     authCheckEmail: "账户已创建，请检查你的邮箱并确认账户。",
     authSignupSuccess: "账户创建成功。",
     authSignupError: "创建账户时出错。",
+
+    successTitle: "付款成功",
+    successText: "您的付款已成功处理。您的 Pro 方案正在启用中。",
+    successBackHome: "返回 Nuxsum",
+    successBackPricing: "查看价格",
+    pricingManageSubscription: "管理订阅",
+    pricingMiniNote: "可随时取消。没有隐藏费用。"
   }
 };

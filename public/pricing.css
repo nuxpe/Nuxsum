@@ -338,3 +338,22 @@
     font-size: 16px;
   }
 }
+
+.pricing-mini-note {
+  margin-top: 6px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.pricing-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.hidden {
+  display: none !important;
+}
