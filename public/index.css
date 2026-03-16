@@ -1130,3 +1130,96 @@ button:hover {
     right: 6px;
   }
 }
+
+/* =========================================================
+   PRO FEATURES
+========================================================= */
+.pro-feature {
+  position: relative;
+  overflow: hidden;
+}
+
+.pro-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.small-badge {
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+.pro-lock {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.card-corner-lock {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.card-corner-lock i {
+  width: 14px;
+  height: 14px;
+}
+
+/* Estado free */
+.user-free .pro-feature {
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
+.user-free .pro-feature:hover {
+  opacity: 0.72;
+}
+
+.user-free .inputTypeOption.pro-feature,
+.user-free .summary-size-card.pro-feature,
+.user-free .summary-type-card.pro-feature {
+  cursor: not-allowed;
+}
+
+.user-free .inputTypeOption.pro-feature::after,
+.user-free .summary-size-card.pro-feature::after,
+.user-free .summary-type-card.pro-feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+/* Estado pro */
+.user-pro [data-pro="true"] {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.user-pro [data-pro="true"] .pro-badge,
+.user-pro [data-pro="true"] .card-corner-lock {
+  display: none !important;
+}
+
+.user-pro .inputTypeOption[data-pro="true"] {
+  opacity: 1 !important;
+}

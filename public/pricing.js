@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function updatePricingUI() {
   const upgradeBtn = document.getElementById("upgradeProBtn");
   const manageBtn = document.getElementById("manageBillingBtn");
+  const freePlanBtn = document.getElementById("freePlanBtn");
 
   try {
     const user = await getCurrentUser();
@@ -122,6 +123,12 @@ async function updatePricingUI() {
     if (!user) {
       upgradeBtn?.classList.remove("hidden");
       manageBtn?.classList.add("hidden");
+
+      if (freePlanBtn) {
+        freePlanBtn.classList.remove("hidden");
+        freePlanBtn.textContent = t("pricingCurrentPlan");
+      }
+
       return;
     }
 
@@ -129,25 +136,45 @@ async function updatePricingUI() {
       .from("profiles")
       .select("plan")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Pricing UI profile error:", error);
       upgradeBtn?.classList.remove("hidden");
       manageBtn?.classList.add("hidden");
+
+      if (freePlanBtn) {
+        freePlanBtn.classList.remove("hidden");
+        freePlanBtn.textContent = t("pricingCurrentPlan");
+      }
+
       return;
     }
 
     if (data?.plan === "pro") {
       upgradeBtn?.classList.add("hidden");
       manageBtn?.classList.remove("hidden");
+
+      if (freePlanBtn) {
+        freePlanBtn.classList.add("hidden");
+      }
     } else {
       upgradeBtn?.classList.remove("hidden");
       manageBtn?.classList.add("hidden");
+
+      if (freePlanBtn) {
+        freePlanBtn.classList.remove("hidden");
+        freePlanBtn.textContent = t("pricingCurrentPlan");
+      }
     }
   } catch (error) {
     console.error("Pricing UI error:", error);
     upgradeBtn?.classList.remove("hidden");
     manageBtn?.classList.add("hidden");
+
+    if (freePlanBtn) {
+      freePlanBtn.classList.remove("hidden");
+      freePlanBtn.textContent = t("pricingCurrentPlan");
+    }
   }
 }

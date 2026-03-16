@@ -121,6 +121,33 @@ function getProMessageKeyByType(type) {
   return "proFeature";
 }
 
+
+
+/* =========================
+   PRO HANDLERS
+========================= */
+function updateProUI() {
+  const proElements = document.querySelectorAll('[data-pro="true"]');
+
+  if (isProUser()) {
+    document.body.classList.add("user-pro");
+    document.body.classList.remove("user-free");
+  } else {
+    document.body.classList.add("user-free");
+    document.body.classList.remove("user-pro");
+  }
+
+  proElements.forEach((element) => {
+    if (isProUser()) {
+      element.classList.remove("pro-locked", "locked", "disabled");
+      element.removeAttribute("aria-disabled");
+    } else {
+      element.classList.add("pro-locked");
+    }
+  });
+
+  lucide.createIcons();
+}
 /* =========================
    TOAST
 ========================= */
@@ -393,6 +420,7 @@ async function updateCurrentUserPlan() {
     if (!user) {
       currentUserPlan = "free";
       currentCharLimit = 5000;
+      updateProUI();
       return;
     }
 
@@ -400,21 +428,25 @@ async function updateCurrentUserPlan() {
       .from("profiles")
       .select("plan")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error fetching profile:", error);
       currentUserPlan = "free";
       currentCharLimit = 5000;
+      updateProUI();
       return;
     }
 
     currentUserPlan = data?.plan || "free";
     currentCharLimit = currentUserPlan === "pro" ? 20000 : 5000;
+
+    updateProUI();
   } catch (error) {
     console.error("Failed to get user plan:", error);
     currentUserPlan = "free";
     currentCharLimit = 5000;
+    updateProUI();
   }
 }
 
