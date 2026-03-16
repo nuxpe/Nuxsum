@@ -39,24 +39,41 @@ export default async function handler(req, res) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
-    console.error("Webhook signature error:", error.message);
+    console.error("Webhook signature verification failed:", error.message);
     return res.status(400).send(`Webhook Error: ${error.message}`);
   }
 
   try {
+
+    // pagamento concluído
     if (event.type === "checkout.session.completed") {
+
       const session = event.data.object;
+
       const userId = session.metadata?.user_id;
 
-      if (userId) {
-        await supabaseAdmin
-          .from("profiles")
-          .update({ plan: "pro" })
-          .eq("id", userId);
+      if (!userId) {
+        console.error("Missing user_id in metadata");
+        return res.status(400).send("Missing user_id");
       }
+
+      const subscriptionId = session.subscription;
+      const customerId = session.customer;
+
+      await supabaseAdmin
+        .from("profiles")
+        .update({
+          plan: "pro",
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscriptionId
+        })
+        .eq("id", userId);
+
+      console.log("User upgraded to Pro:", userId);
     }
 
     return res.status(200).json({ received: true });
+
   } catch (error) {
     console.error("Webhook handler error:", error);
     return res.status(500).send("Server error");

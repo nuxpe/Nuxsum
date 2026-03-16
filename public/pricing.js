@@ -1,6 +1,7 @@
 import { getCurrentSession } from "./auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
   initCommonPage();
 
   const upgradeProBtn = document.getElementById("upgradeProBtn");
@@ -10,9 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const session = await getCurrentSession();
 
       if (!session?.access_token) {
-        alert("Tens de iniciar sessão primeiro.");
+        alert("You need to sign in first.");
+        window.location.href = "./index.html";
         return;
       }
+
+      upgradeProBtn.disabled = true;
+      upgradeProBtn.textContent = "Loading...";
 
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -28,10 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.error || "Checkout error");
       }
 
+      if (!data.url) {
+        throw new Error("Missing checkout URL");
+      }
+
       window.location.href = data.url;
     } catch (error) {
       console.error("Upgrade error:", error);
       alert(t("serverError"));
+      upgradeProBtn.disabled = false;
+      upgradeProBtn.textContent = t("pricingUpgradeBtn");
     }
   });
 });

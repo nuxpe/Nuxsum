@@ -45,6 +45,12 @@ export default async function handler(req, res) {
       metadata: {
         user_id: user.id,
         plan: "pro"
+      },
+      subscription_data: {
+        metadata: {
+          user_id: user.id,
+          plan: "pro"
+        }
       }
     });
 
