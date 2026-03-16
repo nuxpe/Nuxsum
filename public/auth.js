@@ -40,31 +40,54 @@ export async function signOutUser() {
 }
 
 export async function getCurrentUser() {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser();
 
-  if (error) {
+    if (error) {
+      if (error.name === "AuthSessionMissingError") {
+        return null;
+      }
+
+      throw error;
+    }
+
+    return user || null;
+  } catch (error) {
+    if (error?.name === "AuthSessionMissingError") {
+      return null;
+    }
+
     throw error;
   }
-
-  return user;
 }
 
 export async function getCurrentSession() {
-  const {
-    data: { session },
-    error
-  } = await supabase.auth.getSession();
+  try {
+    const {
+      data: { session },
+      error
+    } = await supabase.auth.getSession();
 
-  if (error) {
+    if (error) {
+      if (error.name === "AuthSessionMissingError") {
+        return null;
+      }
+
+      throw error;
+    }
+
+    return session || null;
+  } catch (error) {
+    if (error?.name === "AuthSessionMissingError") {
+      return null;
+    }
+
     throw error;
   }
-
-  return session;
 }
-
 export function onAuthStateChange(callback) {
   return supabase.auth.onAuthStateChange((_event, session) => {
     callback(session);
