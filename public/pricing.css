@@ -7,31 +7,78 @@
   margin: 0 auto;
 }
 
+/* =========================================================
+   TOPBAR
+========================================================= */
 .pricing-topbar {
+  display: flex;
+  align-items: center;
   width: 100%;
+  gap: 16px;
 }
 
 .pricing-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: inherit;
   text-decoration: none;
+  flex-shrink: 0;
+}
+
+.pricing-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .pricing-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
   color: inherit;
   text-decoration: none;
-  opacity: 0.8;
+  opacity: 0.85;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  transition: 0.2s ease;
 }
 
 .pricing-back:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
 }
 
+.pricing-back i {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.pricing-actions .language-dropdown {
+  flex-shrink: 0;
+}
+
+.pricing-actions .language-toggle {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
 .pricing-hero {
   text-align: center;
   max-width: 760px;
@@ -44,8 +91,8 @@
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border-radius: 999px;
   margin-bottom: 16px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.08);
@@ -63,21 +110,34 @@
   font-size: 18px;
   line-height: 1.6;
   margin: 0;
+  opacity: 0.85;
 }
 
+/* =========================================================
+   GRID
+========================================================= */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
+.pricing-bottom {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+/* =========================================================
+   CARDS / PANELS
+========================================================= */
 .pricing-card,
 .pricing-panel {
   position: relative;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: 20px;
+  padding: 24px;
 }
 
 .pricing-card-pro {
@@ -87,12 +147,12 @@
 
 .pricing-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 700;
@@ -115,27 +175,34 @@
 }
 
 .pricing-price {
-  font-size: 52px;
+  font-size: 48px;
   line-height: 1;
   font-weight: 800;
 }
 
 .pricing-period {
   opacity: 0.7;
-  padding-bottom: 6px;
+  padding-bottom: 5px;
+  font-size: 14px;
 }
 
 .pricing-desc {
   min-height: 48px;
   margin-bottom: 20px;
   line-height: 1.6;
+  opacity: 0.85;
 }
 
+/* =========================================================
+   BUTTONS
+========================================================= */
 .pricing-btn {
   width: 100%;
+  min-height: 44px;
   border: 0;
-  border-radius: 16px;
-  padding: 14px 16px;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s ease;
@@ -155,6 +222,9 @@
   color: white;
 }
 
+/* =========================================================
+   FEATURES
+========================================================= */
 .pricing-features {
   list-style: none;
   padding: 0;
@@ -177,12 +247,9 @@
   margin-top: 2px;
 }
 
-.pricing-bottom {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 24px;
-}
-
+/* =========================================================
+   PANELS / FAQ
+========================================================= */
 .pricing-panel h2 {
   margin-top: 0;
   margin-bottom: 14px;
@@ -190,6 +257,7 @@
 
 .pricing-panel p {
   line-height: 1.6;
+  opacity: 0.85;
 }
 
 .pricing-faq {
@@ -200,7 +268,7 @@
 
 .faq-item {
   padding: 16px 18px;
-  border-radius: 18px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -210,6 +278,9 @@
   margin-bottom: 6px;
 }
 
+/* =========================================================
+   FOOTER
+========================================================= */
 .pricing-footer {
   text-align: center;
   margin-top: 36px;
@@ -217,6 +288,9 @@
   font-size: 14px;
 }
 
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 @media (max-width: 900px) {
   .pricing-grid,
   .pricing-bottom {
@@ -229,63 +303,8 @@
   }
 
   .pricing-price {
-    font-size: 42px;
+    font-size: 40px;
   }
-}
-
-.pricing-topbar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 16px;
-}
-
-.pricing-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: inherit;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.pricing-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: nowrap;
-}
-
-.pricing-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.8;
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  white-space: nowrap;
-}
-
-.pricing-back:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.pricing-actions .language-dropdown {
-  flex-shrink: 0;
-}
-
-.pricing-actions .language-toggle {
-  min-width: 48px;
-  height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media (max-width: 640px) {
@@ -298,10 +317,24 @@
   }
 
   .pricing-back {
-    padding: 10px 12px;
+    padding: 0 10px;
   }
 
   .pricing-back span {
     display: none;
+  }
+
+  .pricing-card,
+  .pricing-panel {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .pricing-title {
+    line-height: 1.1;
+  }
+
+  .pricing-subtitle {
+    font-size: 16px;
   }
 }

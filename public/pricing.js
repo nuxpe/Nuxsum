@@ -1,3 +1,5 @@
+import { getCurrentSession } from "./auth.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   initCommonPage();
 
@@ -5,24 +7,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   upgradeProBtn?.addEventListener("click", async () => {
     try {
-      /*
-        Mais tarde trocas isto pela tua rota real de Stripe, por exemplo:
-        const res = await fetch("/api/create-checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: "pro" })
-        });
+      const session = await getCurrentSession();
 
-        const data = await res.json();
+      if (!session?.access_token) {
+        alert("Tens de iniciar sessão primeiro.");
+        return;
+      }
 
-        if (!res.ok) {
-          throw new Error(data.error || "Checkout error");
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
         }
+      });
 
-        window.location.href = data.url;
-      */
+      const data = await res.json();
 
-      alert(t("pricingStripePlaceholder"));
+      if (!res.ok) {
+        throw new Error(data.error || "Checkout error");
+      }
+
+      window.location.href = data.url;
     } catch (error) {
       console.error("Upgrade error:", error);
       alert(t("serverError"));

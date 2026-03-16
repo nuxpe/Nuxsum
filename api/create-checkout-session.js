@@ -1,6 +1,12 @@
 import Stripe from "stripe";
+import { createClient } from "@supabase/supabase-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,46 +14,45 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId, email } = req.body;
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.replace("Bearer ", "");
 
-    if (!userId || !email) {
-      return res.status(400).json({ error: "Missing user data" });
+    if (!token) {
+      return res.status(401).json({ error: "Not authenticated" });
     }
 
-    // Aqui deves ir à BD buscar stripe_customer_id, se já existir
-    let stripeCustomerId = null;
+    const {
+      data: { user },
+      error: userError
+    } = await supabaseAdmin.auth.getUser(token);
 
-    // Exemplo simples: criar sempre customer se ainda não existir
-    const customer = await stripe.customers.create({
-      email,
-      metadata: {
-        userId
-      }
-    });
+    if (userError || !user) {
+      return res.status(401).json({ error: "Invalid user" });
+    }
 
-    stripeCustomerId = customer.id;
-
-    // Aqui também devias guardar stripeCustomerId na tua BD
-
-    const session = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
-      customer: stripeCustomerId,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_PRO_MONTHLY,
+          price: process.env.STRIPE_PRICE_ID_PRO,
           quantity: 1
         }
       ],
-      success_url: `${process.env.APP_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.APP_URL}/pricing.html`,
+      success_url: `${process.env.PUBLIC_SITE_URL}/pricing-success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.PUBLIC_SITE_URL}/pricing.html`,
+      client_reference_id: user.id,
+      customer_email: user.email,
       metadata: {
-        userId
+        user_id: user.id,
+        plan: "pro"
       }
     });
 
-    return res.status(200).json({ url: session.url });
+    return res.status(200).json({
+      url: checkoutSession.url
+    });
   } catch (error) {
-    console.error("create-checkout-session error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Stripe checkout error:", error);
+    return res.status(500).json({ error: "Failed to create checkout session" });
   }
 }
