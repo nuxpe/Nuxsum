@@ -74,12 +74,6 @@ function getErrorMessage(key, lang) {
       "id-ID": "Teks untuk diringkas tidak ditemukan.",
       "zh-CN": "缺少要摘要的文本。"
     },
-    missingUser: {
-      "pt-PT": "Utilizador em falta.",
-      "en-US": "Missing user.",
-      "id-ID": "Pengguna tidak ditemukan.",
-      "zh-CN": "缺少用户。"
-    },
     userNotFound: {
       "pt-PT": "Utilizador não encontrado.",
       "en-US": "User not found.",
@@ -116,11 +110,15 @@ function getErrorMessage(key, lang) {
 }
 
 async function getUserPlan(userId) {
+  if (!userId) {
+    return { plan: "free", error: null };
+  }
+
   const { data, error } = await supabase
-    .from("users")
+    .from("profiles")
     .select("plan")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     return { plan: null, error };
@@ -145,12 +143,6 @@ export default async function handler(req, res) {
       size = "size-medium",
       type = "type-formal"
     } = req.body || {};
-
-    if (!userId) {
-      return res.status(400).json({
-        error: getErrorMessage("missingUser", lang)
-      });
-    }
 
     if (!text || !text.trim()) {
       return res.status(400).json({

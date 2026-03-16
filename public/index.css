@@ -288,7 +288,7 @@ button:hover {
   background: var(--color-primary-hover);
 }
 
-.desabled-btn:hover {
+.disabled-btn:hover {
   cursor: not-allowed;
   opacity: 0.6;
 }

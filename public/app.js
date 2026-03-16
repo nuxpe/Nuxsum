@@ -279,10 +279,9 @@ function updateCharCounter() {
 function initCharCounter() {
   if (!charCounter || !inputText) return;
 
-  charCounter.textContent = "0 / 12000";
+  charCounter.textContent = `0 / ${currentCharLimit}`;
   inputText.addEventListener("input", updateCharCounter);
 }
-
 /* =========================
    COPY RESULT
 ========================= */
