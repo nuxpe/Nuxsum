@@ -590,7 +590,13 @@ async function summarizeText() {
     }
 
     if (!res.ok) {
+      output.classList.remove("show");
       output.textContent = data.error || t("serverError");
+
+      requestAnimationFrame(() => {
+        output.classList.add("show");
+      });
+
       return;
     }
 
@@ -605,14 +611,17 @@ async function summarizeText() {
 
     updateSummaryStats(text, summary);
   } catch (error) {
-    clearTimeout(timeoutId);
-    console.error("Summarize error:", error);
+    output.classList.remove("show");
 
     if (error.name === "AbortError") {
       output.textContent = t("requestTimeout");
     } else {
       output.textContent = t("serverError");
     }
+
+    requestAnimationFrame(() => {
+      output.classList.add("show");
+    });
   } finally {
     stopLoadingAnimation();
     setSummarizeLoadingState(false);

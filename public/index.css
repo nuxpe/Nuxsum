@@ -1370,3 +1370,31 @@ button:hover {
   opacity: 1;
   transform: translateY(0);
 }
+
+.output-copy-button {
+  all: unset;
+  position: absolute;
+  top: var(--space-base);
+  right: var(--space-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-muted);
+  z-index: 5;
+}
+
+.output-copy-button:hover {
+  background-color: transparent;
+  transform: scale(1.08);
+}
+
+.output-copy-button:active {
+  transform: scale(0.9);
+}
+
+
+
+.loading-state {
+  pointer-events: none;
+}
