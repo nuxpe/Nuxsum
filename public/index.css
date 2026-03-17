@@ -1223,3 +1223,39 @@ button:hover {
 .user-pro .inputTypeOption[data-pro="true"] {
   opacity: 1 !important;
 }
+
+
+/* =========================================================
+   summary extras for word counter
+========================================================= */
+.summary-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.summary-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border, rgba(255,255,255,0.08));
+  border-radius: 14px;
+  background: var(--color-surface-2, rgba(255,255,255,0.03));
+  min-width: 120px;
+}
+
+.summary-stat-label {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.summary-stat-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hidden {
+  display: none !important;
+}

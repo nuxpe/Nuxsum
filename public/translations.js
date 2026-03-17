@@ -125,7 +125,13 @@ const translations = {
     successBackPricing: "View pricing",
 
     pricingManageSubscription: "Manage subscription",
-    pricingMiniNote: "Cancel anytime. No hidden fees."
+    pricingMiniNote: "Cancel anytime. No hidden fees.",
+
+    word: "word",
+    words: "words",
+    original: "Original",
+    summary: "Summary",
+    reduction: "Reduction",
   },
 
   "pt-PT": {
@@ -254,7 +260,13 @@ const translations = {
     successBackPricing: "Ver pricing",
 
     pricingManageSubscription: "Gerir subscrição",
-    pricingMiniNote: "Cancela quando quiseres. Sem custos escondidos."
+    pricingMiniNote: "Cancela quando quiseres. Sem custos escondidos.",
+
+    word: "palavra",
+    words: "palavras",
+    original: "Original",
+    summary: "Resumo",
+    reduction: "Redução"
   },
 
   "id-ID": {
@@ -383,7 +395,12 @@ const translations = {
     successBackPricing: "Lihat harga",
 
     pricingManageSubscription: "Kelola langganan",
-    pricingMiniNote: "Batalkan kapan saja. Tanpa biaya tersembunyi."
+    pricingMiniNote: "Batalkan kapan saja. Tanpa biaya tersembunyi.",
+    word: "kata",
+    words: "kata",
+    original: "Teks asal",
+    summary: "Ringkasan",
+    reduction: "Pengurangan",
   },
 
   "zh-CN": {
@@ -511,6 +528,11 @@ const translations = {
     successBackHome: "返回 Nuxsum",
     successBackPricing: "查看价格",
     pricingManageSubscription: "管理订阅",
-    pricingMiniNote: "可随时取消。没有隐藏费用。"
+    pricingMiniNote: "可随时取消。没有隐藏费用。",
+    word: "个词",
+    words: "个词",
+    original: "原文",
+    summary: "摘要",
+    reduction: "压缩率"
   }
 };

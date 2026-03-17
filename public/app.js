@@ -24,6 +24,10 @@ const fileDropzone = document.getElementById("fileDropzone");
 const inputFile = document.getElementById("inputFile");
 const selectedFileName = document.getElementById("selectedFileName");
 const typeCards = document.querySelectorAll(".summary-type-card");
+const summaryStats = document.getElementById("summaryStats");
+const originalWordCount = document.getElementById("originalWordCount");
+const summaryWordCount = document.getElementById("summaryWordCount");
+const reductionPercent = document.getElementById("reductionPercent");
 
 /* Modal Pro */
 const upgradeModal = document.getElementById("upgradeModal");
@@ -46,6 +50,46 @@ let recognition = null;
 let isListening = false;
 let recognitionBaseText = "";
 
+
+/* =========================
+   HELPERS PRO
+========================= */
+function countWords(text) {
+  if (!text) return 0;
+
+  return text
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .filter(word => word.length > 0).length;
+}
+
+function formatWordLabel(count) {
+  return `${count} ${count === 1 ? t("word") : t("words")}`;
+}
+
+function calculateReductionPercentage(originalCount, summaryCount) {
+  if (!originalCount || originalCount <= 0) return 0;
+
+  const reduction = ((originalCount - summaryCount) / originalCount) * 100;
+  return Math.max(0, Math.round(reduction));
+}
+
+function updateSummaryStats(originalText, summaryText) {
+  const originalCount = countWords(originalText);
+  const summaryCount = countWords(summaryText);
+  const reduction = calculateReductionPercentage(originalCount, summaryCount);
+
+  originalWordCount.textContent = formatWordLabel(originalCount);
+  summaryWordCount.textContent = formatWordLabel(summaryCount);
+  reductionPercent.textContent = `${reduction}%`;
+
+  summaryStats.classList.remove("hidden");
+}
+
+function resetSummaryStats() {
+  summaryStats.classList.add("hidden");
+}
 
 /* =========================
    HELPERS PRO
@@ -458,18 +502,21 @@ async function summarizeText() {
   const type = selectedType;
   const lang = getCurrentLanguage();
 
+  // 👉 reset stats sempre que começa
+  resetSummaryStats();
+
   if (!text) {
     output.textContent = t("emptyInput");
     return;
   }
 
-if (text.length > currentCharLimit) {
-  output.textContent =
-    currentUserPlan === "pro"
-      ? `You can only summarize up to ${currentCharLimit} characters.`
-      : "Free plan limit reached. Upgrade to Pro to unlock 20000 characters.";
-  return;
-}
+  if (text.length > currentCharLimit) {
+    output.textContent =
+      currentUserPlan === "pro"
+        ? `You can only summarize up to ${currentCharLimit} characters.`
+        : "Free plan limit reached. Upgrade to Pro to unlock 20000 characters.";
+    return;
+  }
 
   setSummarizeLoadingState(true);
   output.textContent = t("writingSummary");
@@ -511,7 +558,13 @@ if (text.length > currentCharLimit) {
       return;
     }
 
-    output.textContent = data.summary || t("emptySummary");
+    const summary = data.summary || t("emptySummary");
+
+    output.textContent = summary;
+
+    // 👉 AQUI entra a nova funcionalidade
+    updateSummaryStats(text, summary);
+
   } catch (error) {
     clearTimeout(timeoutId);
     console.error("Summarize error:", error);
