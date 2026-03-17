@@ -172,21 +172,18 @@ function getProMessageKeyByType(type) {
 ========================= */
 function updateProUI() {
   const proElements = document.querySelectorAll('[data-pro="true"]');
+  const proUser = isProUser();
 
-  if (isProUser()) {
-    document.body.classList.add("user-pro");
-    document.body.classList.remove("user-free");
-  } else {
-    document.body.classList.add("user-free");
-    document.body.classList.remove("user-pro");
-  }
+  document.body.classList.toggle("user-pro", proUser);
+  document.body.classList.toggle("user-free", !proUser);
 
   proElements.forEach((element) => {
-    if (isProUser()) {
+    if (proUser) {
       element.classList.remove("pro-locked", "locked", "disabled");
       element.removeAttribute("aria-disabled");
     } else {
       element.classList.add("pro-locked");
+      element.setAttribute("aria-disabled", "true");
     }
   });
 

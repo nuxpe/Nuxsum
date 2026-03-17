@@ -1180,7 +1180,10 @@ button:hover {
   height: 14px;
 }
 
-/* Estado free */
+/* =========================
+   ESTADO FREE
+========================= */
+
 .user-free .pro-feature {
   opacity: 0.55;
   filter: saturate(0.7);
@@ -1207,22 +1210,38 @@ button:hover {
   pointer-events: none;
 }
 
-/* Estado pro */
-.user-pro [data-pro="true"] {
-  opacity: 1 !important;
-  filter: none !important;
-  pointer-events: auto !important;
-  cursor: pointer !important;
+/* =========================
+   ESTADO PRO
+========================= */
+
+.user-pro .pro-feature {
+  opacity: 1;
+  filter: none;
 }
 
-.user-pro [data-pro="true"] .pro-badge,
-.user-pro [data-pro="true"] .card-corner-lock {
-  display: none !important;
+.user-pro .inputTypeOption.pro-feature,
+.user-pro .summary-size-card.pro-feature,
+.user-pro .summary-type-card.pro-feature {
+  cursor: pointer;
 }
 
-.user-pro .inputTypeOption[data-pro="true"] {
-  opacity: 1 !important;
+/* remover overlay escuro do free */
+.user-pro .inputTypeOption.pro-feature::after,
+.user-pro .summary-size-card.pro-feature::after,
+.user-pro .summary-type-card.pro-feature::after {
+  content: none;
+  display: none;
 }
+
+/* esconder badge e lock quando já é Pro */
+.user-pro .pro-feature .pro-badge,
+.user-pro .pro-feature .card-corner-lock {
+  display: none;
+}
+
+
+
+
 
 
 /* =========================================================
