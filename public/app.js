@@ -540,15 +540,27 @@ async function summarizeText() {
   resetSummaryStats();
 
   if (!text) {
+    output.classList.remove("show");
     output.textContent = t("emptyInput");
+
+    requestAnimationFrame(() => {
+      output.classList.add("show");
+    });
+
     return;
   }
 
   if (text.length > currentCharLimit) {
+    output.classList.remove("show");
     output.textContent =
       currentUserPlan === "pro"
         ? `You can only summarize up to ${currentCharLimit} characters.`
         : "Free plan limit reached. Upgrade to Pro to unlock 20000 characters.";
+
+    requestAnimationFrame(() => {
+      output.classList.add("show");
+    });
+
     return;
   }
 
