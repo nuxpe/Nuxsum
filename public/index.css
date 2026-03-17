@@ -605,77 +605,7 @@ button:hover {
   text-align: center;
 }
 
-/* =========================================================
-   PRO FEATURES
-========================================================= */
-.pro-feature {
-  position: relative;
-  opacity: 0.55;
-  filter: saturate(0.7);
-  overflow: hidden;
-}
 
-.pro-feature:hover {
-  opacity: 0.72;
-}
-
-.pro-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  max-width: 100%;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.small-badge {
-  padding: 2px 7px;
-  font-size: 10px;
-}
-
-.pro-lock {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-}
-
-.card-corner-lock {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  opacity: 0.8;
-  z-index: 2;
-}
-
-.card-corner-lock i {
-  width: 14px;
-  height: 14px;
-}
-
-.inputTypeOption.pro-feature,
-.summary-size-card.pro-feature,
-.summary-type-card.pro-feature {
-  cursor: not-allowed;
-}
-
-.inputTypeOption.pro-feature::after,
-.summary-size-card.pro-feature::after,
-.summary-type-card.pro-feature::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgba(0, 0, 0, 0.12);
-  pointer-events: none;
-}
 
 /* =========================================================
    ADS LAYOUT
@@ -1131,54 +1061,7 @@ button:hover {
   }
 }
 
-/* =========================================================
-   PRO FEATURES
-========================================================= */
-.pro-feature {
-  position: relative;
-  overflow: hidden;
-}
 
-.pro-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  max-width: 100%;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.small-badge {
-  padding: 2px 7px;
-  font-size: 10px;
-}
-
-.pro-lock {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-}
-
-.card-corner-lock {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  opacity: 0.8;
-  z-index: 2;
-}
-
-.card-corner-lock i {
-  width: 14px;
-  height: 14px;
-}
 
 /* =========================
    ESTADO FREE
@@ -1277,4 +1160,213 @@ button:hover {
 
 .hidden {
   display: none !important;
+}
+
+/* =========================================================
+   PRO FEATURES
+========================================================= */
+.pro-feature {
+  position: relative;
+  overflow: hidden;
+}
+
+/* badges / locks */
+.pro-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.small-badge {
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+.pro-lock {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.card-corner-lock {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.card-corner-lock i {
+  width: 14px;
+  height: 14px;
+}
+
+/* =========================
+   ESTADO FREE
+========================= */
+
+.user-free .pro-feature {
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
+.user-free .pro-feature:hover {
+  opacity: 0.72;
+}
+
+.user-free .inputTypeOption.pro-feature,
+.user-free .summary-size-card.pro-feature,
+.user-free .summary-type-card.pro-feature {
+  cursor: not-allowed;
+}
+
+.user-free .inputTypeOption.pro-feature::after,
+.user-free .summary-size-card.pro-feature::after,
+.user-free .summary-type-card.pro-feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+/* =========================
+   ESTADO PRO
+========================= */
+
+/* no Pro ficam iguais aos normais */
+.user-pro .pro-feature {
+  opacity: 1;
+  filter: none;
+}
+
+.user-pro .inputTypeOption.pro-feature,
+.user-pro .summary-size-card.pro-feature,
+.user-pro .summary-type-card.pro-feature {
+  cursor: pointer;
+}
+
+/* remove o overlay escuro do free */
+.user-pro .inputTypeOption.pro-feature::after,
+.user-pro .summary-size-card.pro-feature::after,
+.user-pro .summary-type-card.pro-feature::after {
+  content: none;
+  display: none;
+}
+
+/* esconder badge e lock no Pro */
+.user-pro .pro-feature .pro-badge,
+.user-pro .pro-feature .card-corner-lock {
+  display: none;
+}
+
+/* no Pro, o texto dos premium não selecionados
+   fica com a mesma suavidade dos normais */
+.user-pro .inputTypeOption.pro-feature:not(.active) span {
+  opacity: 0.6;
+}
+
+/* quando selecionado, texto normal */
+.user-pro .inputTypeOption.pro-feature.active span,
+.user-pro .summary-size-card.pro-feature.selected > div,
+.user-pro .summary-type-card.pro-feature.selected > div,
+.user-pro .summary-size-card.pro-feature.selected .display-flex > div,
+.user-pro .summary-type-card.pro-feature.selected .display-flex > div {
+  opacity: 1;
+}
+
+/* =========================
+   Loadings
+========================= */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.loading-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loading-line {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.05) 25%,
+    rgba(255,255,255,0.12) 50%,
+    rgba(255,255,255,0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.line-1 { width: 100%; }
+.line-2 { width: 88%; }
+.line-3 { width: 64%; }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/*-----------------
+  TEST
+  -----------------*/
+.output-text {
+  font-family: "JetBrains Mono", monospace;
+  white-space: pre-wrap;
+  color: var(--color-text);
+  padding-right: 40px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.output-text.show {
+  opacity: 1;
+  transform: translateY(0);
 }

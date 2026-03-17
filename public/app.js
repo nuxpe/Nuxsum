@@ -28,6 +28,8 @@ const summaryStats = document.getElementById("summaryStats");
 const originalWordCount = document.getElementById("originalWordCount");
 const summaryWordCount = document.getElementById("summaryWordCount");
 const reductionPercent = document.getElementById("reductionPercent");
+const loadingState = document.getElementById("loadingState");
+const loadingMessage = document.getElementById("loadingMessage");
 
 /* Modal Pro */
 const upgradeModal = document.getElementById("upgradeModal");
@@ -49,7 +51,43 @@ let selectedInputType = "Text";
 let recognition = null;
 let isListening = false;
 let recognitionBaseText = "";
+let loadingInterval = null;
+let loadingMessageIndex = 0;
 
+
+/* =========================
+   smart loading
+========================= */
+function getLoadingMessages() {
+  return [
+    t("loadingReading"),
+    t("loadingKeyPoints"),
+    t("loadingWriting")
+  ];
+}
+
+function startLoadingAnimation() {
+  const messages = getLoadingMessages();
+
+  loadingMessageIndex = 0;
+  loadingMessage.textContent = messages[loadingMessageIndex];
+
+  loadingState.classList.remove("hidden");
+
+  loadingInterval = setInterval(() => {
+    loadingMessageIndex = (loadingMessageIndex + 1) % messages.length;
+    loadingMessage.textContent = messages[loadingMessageIndex];
+  }, 1600);
+}
+
+function stopLoadingAnimation() {
+  loadingState.classList.add("hidden");
+
+  if (loadingInterval) {
+    clearInterval(loadingInterval);
+    loadingInterval = null;
+  }
+}
 
 /* =========================
    HELPERS PRO
@@ -499,7 +537,6 @@ async function summarizeText() {
   const type = selectedType;
   const lang = getCurrentLanguage();
 
-  // 👉 reset stats sempre que começa
   resetSummaryStats();
 
   if (!text) {
@@ -516,7 +553,9 @@ async function summarizeText() {
   }
 
   setSummarizeLoadingState(true);
-  output.textContent = t("writingSummary");
+  output.classList.remove("show");
+  output.textContent = "";
+  startLoadingAnimation();
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
@@ -557,11 +596,14 @@ async function summarizeText() {
 
     const summary = data.summary || t("emptySummary");
 
+    output.classList.remove("show");
     output.textContent = summary;
 
-    // 👉 AQUI entra a nova funcionalidade
-    updateSummaryStats(text, summary);
+    requestAnimationFrame(() => {
+      output.classList.add("show");
+    });
 
+    updateSummaryStats(text, summary);
   } catch (error) {
     clearTimeout(timeoutId);
     console.error("Summarize error:", error);
@@ -572,6 +614,7 @@ async function summarizeText() {
       output.textContent = t("serverError");
     }
   } finally {
+    stopLoadingAnimation();
     setSummarizeLoadingState(false);
   }
 }

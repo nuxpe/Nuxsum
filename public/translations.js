@@ -132,6 +132,9 @@ const translations = {
     original: "Original",
     summary: "Summary",
     reduction: "Reduction",
+      loadingReading: "Reading your text...",
+  loadingKeyPoints: "Finding the key points...",
+  loadingWriting: "Writing the summary...",
   },
 
   "pt-PT": {
@@ -266,7 +269,10 @@ const translations = {
     words: "palavras",
     original: "Original",
     summary: "Resumo",
-    reduction: "Redução"
+    reduction: "Redução",
+      loadingReading: "A ler o texto...",
+  loadingKeyPoints: "A identificar ideias principais...",
+  loadingWriting: "A gerar o resumo..."
   },
 
   "id-ID": {
@@ -401,6 +407,9 @@ const translations = {
     original: "Teks asal",
     summary: "Ringkasan",
     reduction: "Pengurangan",
+      loadingReading: "Membaca teks...",
+  loadingKeyPoints: "Menemukan poin utama...",
+  loadingWriting: "Membuat ringkasan...",
   },
 
   "zh-CN": {
@@ -533,6 +542,9 @@ const translations = {
     words: "个词",
     original: "原文",
     summary: "摘要",
-    reduction: "压缩率"
+    reduction: "压缩率",
+      loadingReading: "正在读取文本...",
+  loadingKeyPoints: "正在提取重点...",
+  loadingWriting: "正在生成摘要..."
   }
 };
